@@ -155,7 +155,7 @@ const Profile = () => {
 
       <div className="container mt-4">
 
-        {/* Student Profile Info */}
+    
        < div className="border rounded shadow-sm p-4 mb-4 d-flex justify-content-between align-items-start">
   
 <div>
@@ -184,10 +184,10 @@ const Profile = () => {
   </div>
 </div>
     
-        {/* Dashboard */}
+    
         <div className="row g-4">
 
-          {/* Active Listings */}
+    
           <div className="col-md-4">
   <div className="border rounded shadow-sm p-4" style={{ backgroundColor: "#f8f9fa", minHeight: "500px" }}>
     <h4 className="text-secondary">Active Listings</h4>
@@ -216,57 +216,57 @@ const Profile = () => {
   </div>
 </div>
 
-          {/* Sold Items */}
+         
           <div className="col-md-4">
-  <div className="border rounded shadow-sm p-4" style={{ backgroundColor: "#e9f7ef", minHeight: "500px" }}>
-    <h4 className="text-success">Sold Items</h4>
-    <span className="badge bg-success">{student?.soldProducts?.length || 0} items</span>
-    <div className="overflow-auto mt-3" style={{ maxHeight: "420px" }}>
-      {student?.soldProducts?.length > 0 ? (
-        student.soldProducts.map(item => (
-          <div key={item.id} className="card mb-3 shadow-sm">
-            <img src={item.image || ""} className="card-img-top" alt={item.name} />
-            <div className="card-body">
-              <h5 className="card-title">{item.name}</h5>
-              <p className="card-text">Sold for: ${item.price}</p>
+            <div className="border rounded shadow-sm p-4" style={{ backgroundColor: "#e9f7ef", minHeight: "500px" }}>
+              <h4 className="text-success">Sold Items</h4>
+              <span className="badge bg-success">{student?.soldProducts?.length || 0} items</span>
+              <div className="overflow-auto mt-3" style={{ maxHeight: "420px" }}>
+                {student?.soldProducts?.length > 0 ? (
+                  student.soldProducts.map(item => (
+                    <div key={item.id} className="card mb-3 shadow-sm">
+                      <img src={item.image || ""} className="card-img-top" alt={item.name} />
+                      <div className="card-body">
+                        <h5 className="card-title">{item.name}</h5>
+                        <p className="card-text">Sold for: ${item.price}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No sold items.</p>
+                )}
+              </div>
             </div>
           </div>
-        ))
-      ) : (
-        <p>No sold items.</p>
-      )}
-    </div>
-  </div>
-</div>
 
 
-          {/* Past Purchases */}
+         
           <div className="col-md-4">
-  <div className="border rounded shadow-sm p-4" style={{ backgroundColor: "#fff3cd", minHeight: "500px" }}>
-    <h4 className="text-warning">Past Purchases</h4>
-    <span className="badge bg-warning text-dark">{student?.purchases?.length || 0} items</span>
-    <div className="overflow-auto mt-3" style={{ maxHeight: "420px" }}>
-      {student?.purchases?.length > 0 ? (
-        student.purchases.map(purchase => (
-          <div key={purchase.id} className="card mb-3 shadow-sm">
-            <img src={purchase.image || ""} className="card-img-top" alt={purchase.name} />
-            <div className="card-body d-flex flex-column">
-              <h5 className="card-title">{purchase.name}</h5>
-              <p className="card-text">From: {purchase.sellerName}</p>
-              <p className="card-text">Price: ${purchase.price}</p>
+            <div className="border rounded shadow-sm p-4" style={{ backgroundColor: "#fff3cd", minHeight: "500px" }}>
+              <h4 className="text-warning">Past Purchases</h4>
+              <span className="badge bg-warning text-dark">{student?.purchases?.length || 0} items</span>
+              <div className="overflow-auto mt-3" style={{ maxHeight: "420px" }}>
+                {student?.purchases?.length > 0 ? (
+                  student.purchases.map(purchase => (
+                    <div key={purchase.id} className="card mb-3 shadow-sm">
+                      <img src={purchase.image || ""} className="card-img-top" alt={purchase.name} />
+                      <div className="card-body d-flex flex-column">
+                        <h5 className="card-title">{purchase.name}</h5>
+                        <p className="card-text">From: {purchase.sellerName}</p>
+                        <p className="card-text">Price: ${purchase.price}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No past purchases.</p>
+                )}
+              </div>
             </div>
           </div>
-        ))
-      ) : (
-        <p>No past purchases.</p>
-      )}
-    </div>
-  </div>
-</div>
         </div>
       </div>
 
-      {/* Edit Profile Modal */}
+      
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton><Modal.Title>Edit Profile</Modal.Title></Modal.Header>
         <Modal.Body>

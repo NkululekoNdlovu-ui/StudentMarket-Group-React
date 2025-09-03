@@ -3,8 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 import RoleSelection from "./pages/RoleSelection";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";

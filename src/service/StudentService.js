@@ -30,3 +30,7 @@ export const getStudentById = () => {
 export const updateStudent = (student) => {
   return axios.put(`http://localhost:8080/api/student/update`, student);
 };
+
+export const deleteStudent = (studentId) => {
+  return axios.delete(`${REST_API_BASE_URL}/student/delete/${studentId}`);
+};

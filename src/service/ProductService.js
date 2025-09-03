@@ -17,3 +17,6 @@ export const getAllProducts = () => {
   return axios.get(REST_API_BASE_URL + '/getAllProducts');
 }
 
+export const deleteProduct = (productId) => {
+  return axios.delete(`${REST_API_BASE_URL}/delete/${productId}`);
+};

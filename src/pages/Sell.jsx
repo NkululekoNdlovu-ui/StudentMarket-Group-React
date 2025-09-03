@@ -39,7 +39,7 @@ const Sell = () => {
     setIsLoading(true);
 
     try {
-      // const storedUser = localStorage.getItem("loggedInUser");
+      
 
       if (!loggedInUser || !loggedInUser.studentId) {
         setIsLoading(false);

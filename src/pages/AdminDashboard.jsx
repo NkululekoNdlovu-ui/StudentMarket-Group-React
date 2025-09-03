@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { FaUsers, FaBoxOpen, FaSignOutAlt, FaChartBar, FaDatabase, FaUser, FaTrash } from "react-icons/fa";
+import { FaUsers, FaBoxOpen, FaSignOutAlt, FaChartBar, FaDatabase, FaUser, FaTrash, FaSync } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { listRegisteredStudents, deleteStudent as deleteStudentService } from "../service/StudentService";
+import { getAllProducts, deleteProduct as deleteProductService } from "../service/ProductService";
 
 const AdminDashboard = () => {
   const [students, setStudents] = useState([]);
@@ -23,18 +25,12 @@ const AdminDashboard = () => {
     setError(prev => ({ ...prev, students: null }));
 
     try {
-      const response = await fetch('http://localhost:8080/api/student/getAll');
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      // Store full student data instead of just names
+      const response = await listRegisteredStudents();
+      const data = response.data;
+
       setStudents(data);
       setStudentsCount(data.length);
-      
+
     } catch (error) {
       console.error('Error fetching students:', error);
       setError(prev => ({ ...prev, students: error.message }));
@@ -50,17 +46,12 @@ const AdminDashboard = () => {
     setError(prev => ({ ...prev, products: null }));
 
     try {
-      const response = await fetch('http://localhost:8080/api/product/getAllProducts');
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
+      const response = await getAllProducts();
+      const data = response.data;
+
       setProducts(data);
       setProductsCount(data.length);
-      
+
     } catch (error) {
       console.error('Error fetching products:', error);
       setError(prev => ({ ...prev, products: error.message }));
@@ -72,45 +63,47 @@ const AdminDashboard = () => {
   };
 
   const deleteStudent = async (studentId) => {
+    if (!window.confirm('Are you sure you want to delete this student? This will also delete all their products.')) {
+      return;
+    }
+
     try {
-      const response = await fetch(`http://localhost:8080/api/student/delete/${studentId}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        // Remove student from the list
-        setStudents(prev => prev.filter(student => student.studentId !== studentId));
-        setStudentsCount(prev => prev - 1);
-        
-        // Also remove any products owned by this student
-        setProducts(prev => prev.filter(product => 
-          product.seller?.studentId !== studentId
-        ));
-        setProductsCount(prev => {
-          const deletedProductsCount = products.filter(product => 
-            product.seller?.studentId === studentId
-          ).length;
-          return prev - deletedProductsCount;
-        });
-      }
+      await deleteStudentService(studentId);
+
+      setStudents(prev => prev.filter(student => student.studentId !== studentId));
+      setStudentsCount(prev => prev - 1);
+
+
+      const deletedProductsCount = products.filter(product =>
+        product.seller?.studentId === studentId
+      ).length;
+
+      setProducts(prev => prev.filter(product =>
+        product.seller?.studentId !== studentId
+      ));
+      setProductsCount(prev => prev - deletedProductsCount);
+
+      alert('Student and their products deleted successfully');
     } catch (error) {
       console.error('Error deleting student:', error);
+      alert('Error deleting student');
     }
   };
 
   const deleteProduct = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) {
+      return;
+    }
+
     try {
-      const response = await fetch(`http://localhost:8080/api/product/delete/${productId}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        // Remove product from the list
-        setProducts(prev => prev.filter(product => product.productId !== productId));
-        setProductsCount(prev => prev - 1);
-      }
+      await deleteProductService(productId);
+
+      setProducts(prev => prev.filter(product => product.productId !== productId));
+      setProductsCount(prev => prev - 1);
+      alert('Product deleted successfully');
     } catch (error) {
       console.error('Error deleting product:', error);
+      alert('Error deleting product');
     }
   };
 
@@ -137,16 +130,22 @@ const AdminDashboard = () => {
     }
   };
 
-  const getCategoryEmoji = (category) => {
+  const getCategoryIcon = (category) => {
+    // Return placeholder text instead of emojis
     switch (category?.toLowerCase()) {
-      case 'electronics': return '📱';
-      case 'books': return '📚';
-      case 'clothing': return '👕';
-      case 'furniture': return '🪑';
-      case 'sports': return '⚽';
-      case 'laptop': return '💻';
-      case 'speaker': return '🔊';
-      default: return '📦';
+      case 'electronics': return 'ELEC';
+      case 'books': return 'BOOK';
+      case 'clothing': return 'CLTH';
+      case 'furniture': return 'FURN';
+      case 'sports': return 'SPRT';
+      case 'laptop': return 'LAPT';
+      case 'laptops': return 'LAPT';
+      case 'speaker': return 'SPKR';
+      case 'textbooks': return 'TXTB';
+      case 'cellphones': return 'CELL';
+      case 'appliances': return 'APPL';
+      case 'screens': return 'SCRN';
+      default: return 'PROD';
     }
   };
 
@@ -157,8 +156,8 @@ const AdminDashboard = () => {
         <div className="container-fluid px-4 py-3">
           <div className="d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center">
-              <div className="d-flex align-items-center justify-content-center me-3" 
-                   style={{ width: '40px', height: '40px', backgroundColor: '#3b82f6', borderRadius: '8px' }}>
+              <div className="d-flex align-items-center justify-content-center me-3"
+                style={{ width: '40px', height: '40px', backgroundColor: '#3b82f6', borderRadius: '8px' }}>
                 <FaChartBar className="text-white" size={20} />
               </div>
               <div>
@@ -166,7 +165,7 @@ const AdminDashboard = () => {
                 <small className="text-muted">Student Trade Management</small>
               </div>
             </div>
-            <button 
+            <button
               className="btn btn-outline-secondary"
               onClick={handleLogout}
               style={{ borderRadius: '8px' }}
@@ -179,7 +178,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="container-fluid px-4 py-4">
-        {/* Statistics Overview */}
+        {/* Statistics Cards */}
         <div className="row g-3 mb-4">
           <div className="col-lg-6 col-md-6">
             <div className="card border-0 h-100" style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
@@ -196,7 +195,7 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="col-lg-6 col-md-6">
             <div className="card border-0 h-100" style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <div className="card-body p-4">
@@ -214,7 +213,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Action Section */}
+        {/* Action Cards */}
         <div className="row g-4 mb-4">
           <div className="col-md-6">
             <div className="card border-0" style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
@@ -224,7 +223,7 @@ const AdminDashboard = () => {
                   <h6 className="mb-0 fw-semibold">Student Management</h6>
                 </div>
                 <p className="text-muted small mb-3">View and manage all registered students in the system</p>
-                <button 
+                <button
                   className={`btn btn-primary w-100 ${loading.students ? 'disabled' : ''}`}
                   onClick={fetchStudents}
                   disabled={loading.students}
@@ -233,12 +232,12 @@ const AdminDashboard = () => {
                   {loading.students ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                      Loading Students...
+                      Refreshing Students...
                     </>
                   ) : (
                     <>
-                      <FaUsers className="me-2" size={16} />
-                      Load Students
+                      <FaSync className="me-2" size={16} />
+                      Refresh
                     </>
                   )}
                 </button>
@@ -254,7 +253,7 @@ const AdminDashboard = () => {
                   <h6 className="mb-0 fw-semibold">Product & Owner Management</h6>
                 </div>
                 <p className="text-muted small mb-3">Browse all products with their owner information</p>
-                <button 
+                <button
                   className={`btn btn-primary w-100 ${loading.products ? 'disabled' : ''}`}
                   onClick={fetchProducts}
                   disabled={loading.products}
@@ -263,12 +262,12 @@ const AdminDashboard = () => {
                   {loading.products ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                      Loading Products...
+                      Refreshing Products...
                     </>
                   ) : (
                     <>
-                      <FaBoxOpen className="me-2" size={16} />
-                      Load Products
+                      <FaSync className="me-2" size={16} />
+                      Refresh
                     </>
                   )}
                 </button>
@@ -283,14 +282,13 @@ const AdminDashboard = () => {
             <strong>Unable to load students:</strong> {error.students}
           </div>
         )}
-        
+
         {error.products && (
           <div className="alert alert-danger border-0 mb-4" style={{ borderRadius: '12px', backgroundColor: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}>
             <strong>Unable to load products:</strong> {error.products}
           </div>
         )}
 
-        {/* Data Display Section */}
         <div className="row g-4">
           {/* Students List */}
           {students.length > 0 && (
@@ -310,13 +308,13 @@ const AdminDashboard = () => {
                     <div className="row g-2">
                       {students.map((student, idx) => (
                         <div key={idx} className="col-12">
-                          <div className="d-flex align-items-center p-3 rounded" 
-                               style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
-                            <div 
+                          <div className="d-flex align-items-center p-3 rounded"
+                            style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                            <div
                               className="d-flex align-items-center justify-content-center me-3 text-white fw-semibold"
-                              style={{ 
-                                width: '36px', 
-                                height: '36px', 
+                              style={{
+                                width: '36px',
+                                height: '36px',
                                 backgroundColor: '#3b82f6',
                                 borderRadius: '8px',
                                 fontSize: '14px'
@@ -347,7 +345,7 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* Products with Owner Information */}
+          {/* Products List */}
           {products.length > 0 && (
             <div className="col-lg-6">
               <div className="card border-0" style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
@@ -365,36 +363,56 @@ const AdminDashboard = () => {
                     <div className="row g-3">
                       {products.map((product, idx) => (
                         <div key={idx} className="col-12">
-                          <div className="card border-0" 
-                               style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
+                          <div className="card border-0"
+                            style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
                             <div className="card-body p-3">
-                              {/* Product Header with Delete Button */}
                               <div className="d-flex align-items-start justify-content-between mb-3">
                                 <div className="d-flex align-items-center flex-grow-1">
-                                  <div 
+                                  <div
                                     className="d-flex align-items-center justify-content-center me-3"
-                                    style={{ 
-                                      width: '40px', 
-                                      height: '40px', 
-                                      backgroundColor: '#3b82f6',
+                                    style={{
+                                      width: '40px',
+                                      height: '40px',
+                                      backgroundColor: '#e2e8f0',
                                       borderRadius: '8px',
                                       fontSize: '16px'
                                     }}
                                   >
-                                    <span style={{ fontSize: '18px' }}>
-                                      <img src={product.imageData? `data:${product.imageType};base64,${product.imageData}` : "/images/placeholder.png"}
-                                        className="card-img-top"
-                                        alt={product.productName} />
-                                    </span>
+                                    {product.imageData ? (
+                                      <img
+                                        src={`data:${product.imageType};base64,${product.imageData}`}
+                                        alt={product.productName}
+                                        style={{
+                                          width: '40px',
+                                          height: '40px',
+                                          objectFit: 'cover',
+                                          borderRadius: '8px'
+                                        }}
+                                      />
+                                    ) : (
+                                      <div
+                                        className="d-flex align-items-center justify-content-center text-muted"
+                                        style={{
+                                          width: '40px',
+                                          height: '40px',
+                                          backgroundColor: '#e2e8f0',
+                                          borderRadius: '8px',
+                                          fontSize: '10px',
+                                          fontWeight: 'bold'
+                                        }}
+                                      >
+                                        {getCategoryIcon(product.productCategory)}
+                                      </div>
+                                    )}
                                   </div>
                                   <div className="flex-grow-1">
                                     <h6 className="mb-1 fw-semibold text-dark" style={{ fontSize: '14px' }}>
                                       {product.productName}
                                     </h6>
                                     <div className="d-flex align-items-center gap-2 mb-1">
-                                      <span 
-                                        className="badge px-2 py-1 text-white" 
-                                        style={{ 
+                                      <span
+                                        className="badge px-2 py-1 text-white"
+                                        style={{
                                           backgroundColor: getConditionColor(product.condition),
                                           fontSize: '11px',
                                           borderRadius: '4px'
@@ -409,7 +427,7 @@ const AdminDashboard = () => {
                                   </div>
                                 </div>
                                 <div className="d-flex align-items-center gap-2">
-                                  <span 
+                                  <span
                                     className={`badge px-2 py-1 ${product.availabilityStatus ? 'bg-success' : 'bg-secondary'}`}
                                     style={{ fontSize: '10px', borderRadius: '4px' }}
                                   >
@@ -425,18 +443,16 @@ const AdminDashboard = () => {
                                 </div>
                               </div>
 
-                              {/* Product Description */}
                               {product.productDescription && (
                                 <div className="mb-3">
                                   <p className="text-muted small mb-0" style={{ fontSize: '12px', lineHeight: '1.4' }}>
-                                    {product.productDescription.length > 80 
-                                      ? `${product.productDescription.substring(0, 80)}...` 
+                                    {product.productDescription.length > 80
+                                      ? `${product.productDescription.substring(0, 80)}...`
                                       : product.productDescription}
                                   </p>
                                 </div>
                               )}
 
-                              {/* Owner Information */}
                               <div className="border-top pt-3">
                                 <div className="d-flex align-items-center">
                                   <div className="d-flex align-items-center">
@@ -446,11 +462,11 @@ const AdminDashboard = () => {
                                   <div className="d-flex align-items-center">
                                     {product.seller ? (
                                       <>
-                                        <div 
+                                        <div
                                           className="d-flex align-items-center justify-content-center me-2 text-white fw-semibold"
-                                          style={{ 
-                                            width: '24px', 
-                                            height: '24px', 
+                                          style={{
+                                            width: '24px',
+                                            height: '24px',
                                             backgroundColor: '#6366f1',
                                             borderRadius: '6px',
                                             fontSize: '10px'
@@ -476,7 +492,6 @@ const AdminDashboard = () => {
                                 </div>
                               </div>
 
-                              {/* Product Category */}
                               <div className="mt-2">
                                 <small className="text-muted">
                                   Category: <span className="text-dark fw-medium">{product.productCategory}</span>
@@ -498,12 +513,12 @@ const AdminDashboard = () => {
         {students.length === 0 && products.length === 0 && !loading.students && !loading.products && (
           <div className="text-center py-5">
             <div className="mb-4">
-              <div className="d-flex align-items-center justify-content-center mx-auto mb-3" 
-                   style={{ width: '80px', height: '80px', backgroundColor: '#f1f5f9', borderRadius: '16px' }}>
+              <div className="d-flex align-items-center justify-content-center mx-auto mb-3"
+                style={{ width: '80px', height: '80px', backgroundColor: '#f1f5f9', borderRadius: '16px' }}>
                 <FaDatabase className="text-muted" size={32} />
               </div>
               <h5 className="text-dark mb-2">No Data Loaded</h5>
-              <p className="text-muted mb-0">Use the action buttons above to load students and products data.</p>
+              <p className="text-muted mb-0">Use the refresh buttons above to load students and products data.</p>
             </div>
           </div>
         )}

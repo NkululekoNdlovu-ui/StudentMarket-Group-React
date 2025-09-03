@@ -85,7 +85,7 @@ const Home = () => {
               ))}
             </div>
 
-            {/* Carousel controls */}
+           
             <button
               className="carousel-control-prev"
               type="button"
