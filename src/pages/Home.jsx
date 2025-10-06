@@ -11,7 +11,6 @@ const Home = () => {
   const [student, setStudent] = useState({ firstName: "" });
   const [isHoveringBuy, setIsHoveringBuy] = useState(false);
 
-  // Fetch products
   useEffect(() => {
     getAllProducts()
       .then((response) => {
@@ -28,7 +27,6 @@ const Home = () => {
       .catch((err) => console.error("Failed to fetch products:", err));
   }, []);
 
-  // Get logged-in student from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -58,7 +56,6 @@ const Home = () => {
     <>
       <Header />
 
-      {/* Hero Section */}
       <div
         style={{
           height: "35vh",
@@ -79,7 +76,7 @@ const Home = () => {
             width: "100%",
             height: "100%",
             background:
-              "linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(0,0,0,0.9) 100%)",
+              "linear-gradient(to top, rgb(55, 117, 241) 0%, rgba(255, 255, 255, 0.9) 100%)",
             zIndex: 1,
           }}
         ></div>
@@ -137,7 +134,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Value Proposition Section */}
       <div className="container py-4 text-center">
         <div className="row justify-content-center">
           <div className="col-md-10">
@@ -168,7 +164,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Featured Products Slideshow (Single-Item Carousel) */}
       <div
         className="container my-5"
         style={{
@@ -217,7 +212,7 @@ const Home = () => {
                       alt={product.name}
                       style={{
                         height: "400px",
-                        objectFit: "cover",
+                        objectFit: "contain",
                         borderRadius: "10px",
                       }}
                     />
@@ -242,7 +237,7 @@ const Home = () => {
 
             {products.length > 1 && (
               <>
-                <button
+                {/* <button
                   className="carousel-control-prev"
                   type="button"
                   data-bs-target="#productSlideshow"
@@ -271,7 +266,7 @@ const Home = () => {
                       padding: "20px",
                     }}
                   ></span>
-                </button>
+                </button> */}
               </>
             )}
 

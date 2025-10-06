@@ -41,31 +41,28 @@ const Sell = () => {
     setIsLoading(true);
 
     try {
-      
-
       if (!loggedInUser || !loggedInUser.studentId) {
         setIsLoading(false);
         toast.error("You must login first before selling a product.");
-        navigate("/")
+        navigate("/");
         return;
       }
 
-      const { productName, description, condition, category, price, image } = formData;
+      const { productName, description, condition, category, price, image } =
+        formData;
 
       if (productName && description && condition && category && price) {
-
         const productData = {
           productName,
           productDescription: description,
           condition,
           productCategory: category,
           price,
-          availabilityStatus: true, 
-          releaseDate: new Date().toISOString().split("T")[0], 
-          seller: { studentId: loggedInUser.studentId }
+          availabilityStatus: true,
+          releaseDate: new Date().toISOString().split("T")[0],
+          seller: { studentId: loggedInUser.studentId },
         };
 
-        
         const formDataToSend = new FormData();
         formDataToSend.append(
           "product",
@@ -73,10 +70,9 @@ const Sell = () => {
         );
 
         if (image) {
-          formDataToSend.append("productImage", image); 
+          formDataToSend.append("productImage", image);
         }
 
-       
         await capturedProductDetails(formDataToSend);
 
         toast.success("Your item has been submitted for approval!");
@@ -120,7 +116,6 @@ const Sell = () => {
           </div>
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-
               <div className="mb-3">
                 <label htmlFor="productName" className="form-label">
                   Product Name *
@@ -153,7 +148,6 @@ const Sell = () => {
                 ></textarea>
               </div>
 
-             
               <div className="mb-3">
                 <label htmlFor="condition" className="form-label">
                   Condition *
@@ -175,7 +169,6 @@ const Sell = () => {
                 </select>
               </div>
 
-             
               <div className="mb-3">
                 <label htmlFor="category" className="form-label">
                   Category *
@@ -199,7 +192,6 @@ const Sell = () => {
                 </select>
               </div>
 
-              
               <div className="mb-3">
                 <label htmlFor="price" className="form-label">
                   Price (R) *
@@ -216,7 +208,6 @@ const Sell = () => {
                 />
               </div>
 
-              
               <div className="mb-4">
                 <label htmlFor="image" className="form-label">
                   Product Image
@@ -242,7 +233,6 @@ const Sell = () => {
                 </div>
               </div>
 
-           
               <div className="d-grid gap-3">
                 <button
                   type="submit"

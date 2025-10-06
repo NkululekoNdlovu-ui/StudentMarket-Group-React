@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authenticateUser } from "../service/StudentService"; 
+import { authenticateUser } from "../service/StudentService";
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({ identifier: "", password: "" });
+  const [credentials, setCredentials] = useState({
+    identifier: "",
+    password: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -14,29 +17,30 @@ const Login = () => {
     try {
       const response = await authenticateUser({
         email: credentials.identifier,
-        password: credentials.password
+        password: credentials.password,
       });
 
       const result = response.data;
       console.log("Login response:", result);
 
       if (response.status === 200 && result.success) {
-        // Store user data with role
         const userData = { ...result.data, role: result.role };
         localStorage.setItem("user", JSON.stringify(userData));
-        
-        // Store studentId if it's a student
+
         if (result.data.studentId) {
           localStorage.setItem("studentId", result.data.studentId);
         }
 
-        // Redirect based on role
         if (result.role === "superadmin") {
           navigate("/superadmin-dashboard");
           alert(`Welcome back, Super Admin ${result.data.username}!`);
         } else if (result.role === "admin") {
           navigate("/admin-dashboard");
-          alert(`Welcome back, Admin ${result.data.firstName || result.data.username}!`);
+          alert(
+            `Welcome back, Admin ${
+              result.data.firstName || result.data.username
+            }!`
+          );
         } else {
           navigate("/home");
           alert(`Welcome back, ${result.data.firstName}!`);
@@ -62,27 +66,41 @@ const Login = () => {
         <div className="card-body">
           <form onSubmit={handleLogin}>
             <div className="mb-3">
-              <label htmlFor="identifier" className="form-label">Email</label>
+              <label htmlFor="identifier" className="form-label">
+                Email
+              </label>
               <input
                 id="identifier"
                 type="email"
                 className="form-control"
                 placeholder="*******@mycput.ac.za"
                 value={credentials.identifier}
-                onChange={(e) => setCredentials(prev => ({ ...prev, identifier: e.target.value }))}
+                onChange={(e) =>
+                  setCredentials((prev) => ({
+                    ...prev,
+                    identifier: e.target.value,
+                  }))
+                }
                 required
               />
             </div>
 
             <div className="mb-4">
-              <label htmlFor="password" className="form-label">Password</label>
+              <label htmlFor="password" className="form-label">
+                Password
+              </label>
               <input
                 id="password"
                 type="password"
                 className="form-control"
                 placeholder="********"
                 value={credentials.password}
-                onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                onChange={(e) =>
+                  setCredentials((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
                 required
                 onKeyPress={(e) => e.key === "Enter" && handleLogin(e)}
               />
@@ -95,16 +113,24 @@ const Login = () => {
             >
               {isLoading ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                  ></span>
                   Signing In...
                 </>
-              ) : "Sign In"}
+              ) : (
+                "Sign In"
+              )}
             </button>
           </form>
           <div className="mt-4 text-center">
             <p className="text-muted">
               Don't have an account?{" "}
-              <Link to="/signup" className="text-primary text-decoration-none fw-medium">
+              <Link
+                to="/signup"
+                className="text-primary text-decoration-none fw-medium"
+              >
                 Sign up
               </Link>
             </p>

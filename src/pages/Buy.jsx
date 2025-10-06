@@ -252,90 +252,122 @@ const Buy = () => {
       </div>
 
       <Footer />
-=======
 
       
       <Modal
-  show={showModal}
-  onHide={() => setShowModal(false)}
-  size="lg"
-  centered
->
-  {selectedProduct && (
-    <div className="p-3 position-relative">
-     
-      <button
-        type="button"
-        className="btn-close position-absolute top-0 end-0 m-3"
-        aria-label="Close"
-        onClick={() => setShowModal(false)}
-      ></button>
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        size="lg"
+        centered
+      >
+        {selectedProduct && (
+          <div className="p-3 position-relative">
+            <button
+              type="button"
+              className="btn-close position-absolute top-0 end-0 m-3"
+              aria-label="Close"
+              onClick={() => setShowModal(false)}
+            ></button>
 
-      
-      <h5 className="fw-bold mb-3">{selectedProduct.productName}</h5>
+            <h5 className="fw-bold mb-3">{selectedProduct.productName}</h5>
 
-      
-      <div className="ratio ratio-16x9 d-flex justify-content-center align-items-center bg-light">
-        <img
-          src={selectedProduct.image}
-          alt={selectedProduct.productName}
-          style={{
-            objectFit: "contain",
-            maxHeight: "100%",
-            maxWidth: "100%",
-          }}
-          className="card-img-top"
-        />
-      </div>
+            <div className="ratio ratio-16x9 d-flex justify-content-center align-items-center bg-light">
+              <img
+                src={selectedProduct.image}
+                alt={selectedProduct.productName}
+                style={{
+                  objectFit: "contain",
+                  maxHeight: "100%",
+                  maxWidth: "100%",
+                }}
+                className="card-img-top"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "https://via.placeholder.com/500x300?text=No+Image";
+                }}
+              />
+            </div>
 
-      
-      <h4 className="fw-bold mb-2">{formatPrice(selectedProduct.price)}</h4>
+            <h4 className="fw-bold mb-2 mt-3">{formatPrice(selectedProduct.price)}</h4>
 
-      
-      <div className="mb-3">
-        <h6>Description</h6>
-        <p className="text-muted">
-          {selectedProduct.productDescription || "No description available."}
-        </p>
-      </div>
+            <div className="mb-3">
+              <h6>Description</h6>
+              <p className="text-muted">
+                {selectedProduct.productDescription || "No description available."}
+              </p>
+            </div>
 
-     
-      <div className="border-top pt-3">
-        <h6>Owner Information</h6>
-        <div className="d-flex align-items-center gap-3">
-          <img
-            src="https://via.placeholder.com/50"
-            alt="Seller avatar"
-            className="rounded-circle"
-            width="50"
-            height="50"
-          />
-          <div>
-            <p className="mb-1 fw-semibold">
-              {selectedProduct.seller
-                ? `${selectedProduct.seller.firstName} ${selectedProduct.seller.lastName}`
-                : "Community Member"}
-            </p>
-            <small className="text-muted">
-              {selectedProduct.seller?.email || "Member since Jan 2024"}
-            </small>
+            <div className="border-top pt-3">
+              <h6>Owner Information</h6>
+              <div className="d-flex align-items-center gap-3">
+                {selectedProduct.seller?.profileImage ? (
+                  <img
+                    src={
+                      selectedProduct.seller.profileImage.startsWith("data:image")
+                        ? selectedProduct.seller.profileImage
+                        : `data:image/jpeg;base64,${selectedProduct.seller.profileImage}`
+                    }
+                    alt="Seller avatar"
+                    className="rounded-circle"
+                    width="60"
+                    height="60"
+                    style={{
+                      objectFit: "cover",
+                      border: "1px solid #ccc",
+                    }}
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://via.placeholder.com/60?text=No+Img";
+                    }}
+                  />
+                ) : (
+
+                  <div
+                    className="d-flex align-items-center justify-content-center"
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                      borderRadius: "50%",
+                      backgroundColor: "#616868ff",
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: "18px",
+                      textTransform: "uppercase",
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    {`${selectedProduct.seller?.firstName?.[0] || ""}${
+                      selectedProduct.seller?.lastName?.[0] || ""
+                    }`}
+                  </div>
+                )}
+
+                <div>
+                  <p className="mb-1 fw-semibold">
+                    {selectedProduct.seller
+                      ? `${selectedProduct.seller.firstName} ${selectedProduct.seller.lastName}`
+                      : "Community Member"}
+                  </p>
+                  <small className="text-muted">
+                    {selectedProduct.seller?.email || "Member since Jan 2024"}
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            {/* Buy Now Button */}
+            <div className="mt-4">
+              <Link
+                to={`/transaction/${selectedProduct.productId}`}
+                className="btn btn-primary w-100"
+                onClick={() => setShowModal(false)}
+              >
+                Buy Now
+              </Link>
+            </div>
           </div>
-        </div>
-      </div>
-
-      
-      <div className="mt-4">
-        <Link
-          to={`/transaction/${selectedProduct.productId}`}
-          className="btn btn-primary w-100"
-          onClick={() => setShowModal(false)}
-        >
-          Buy Now
-        </Link>
-      </div>
-    </div>
-  )}
-</Modal>
+        )}
+      </Modal>
 
 
     </div>

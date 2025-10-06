@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logoSt from "../assets/logoSt.png";
-import bg from "../assets/bg.png"; 
-import Footer from "../components/footer.jsx";
+import bg from "../assets/bg.png";
 import { getAllProducts } from "../service/ProductService";
 import placeholder from "../assets/placeholder.png";
 
@@ -26,7 +25,6 @@ const LandingPage = () => {
 
   return (
     <>
-      {/* Navbar */}
       <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div className="container">
           <Link className="navbar-brand d-flex align-items-center" to="/">
@@ -37,7 +35,9 @@ const LandingPage = () => {
               className="me-2"
               style={{ filter: "drop-shadow(1px 1px 2px rgba(0,0,0,0.6))" }}
             />
-            <span style={{ color: "#333", fontWeight: "bold", fontSize: "1.4rem" }}>
+            <span
+              style={{ color: "#333", fontWeight: "bold", fontSize: "1.4rem" }}
+            >
               CPUT Marketplace
             </span>
           </Link>
@@ -61,9 +61,7 @@ const LandingPage = () => {
         </div>
       </nav>
 
-     
       <div className="position-relative" style={{ height: "80vh" }}>
-      
         <div
           className="position-absolute w-100 h-100"
           style={{
@@ -75,7 +73,6 @@ const LandingPage = () => {
           }}
         ></div>
 
-       
         <div
           className="position-relative d-flex flex-column justify-content-center align-items-center text-center h-100"
           style={{
@@ -98,22 +95,30 @@ const LandingPage = () => {
 
           <h1 className="display-4 fw-bold">Welcome to CPUT Marketplace</h1>
           <p className="lead mt-3">
-            A safe and trusted marketplace for CPUT students. Buy, sell, and discover great deals
-            within your residence.
+            A safe and trusted marketplace for CPUT students. Buy, sell, and
+            discover great deals within your residence.
           </p>
 
           <div className="mt-4">
             <Link
               to="/login"
               className="btn btn-primary btn-lg rounded-pill me-3"
-              style={{ backgroundColor: "#2575fc", border: "none", transition: "all 0.3s" }}
+              style={{
+                backgroundColor: "#2575fc",
+                border: "none",
+                transition: "all 0.3s",
+              }}
             >
               Login
             </Link>
             <Link
               to="/signup"
               className="btn btn-success btn-lg rounded-pill"
-              style={{ backgroundColor: "#28a745", border: "none", transition: "all 0.3s" }}
+              style={{
+                backgroundColor: "#28a745",
+                border: "none",
+                transition: "all 0.3s",
+              }}
             >
               Register
             </Link>
@@ -121,14 +126,22 @@ const LandingPage = () => {
         </div>
       </div>
 
-      
       <div className="container text-center my-5">
         <h2 className="mb-4">Why Join?</h2>
         <div className="row">
           {[
-            { title: "Safe & Trusted", desc: "Trade confidently within your residence with fellow students." },
-            { title: "Quick Deals", desc: "Buy or sell items quickly without leaving your residence." },
-            { title: "Hot Picks", desc: "Discover trending items and great deals from fellow students." },
+            {
+              title: "Safe & Trusted",
+              desc: "Trade confidently within your residence with fellow students.",
+            },
+            {
+              title: "Quick Deals",
+              desc: "Buy or sell items quickly without leaving your residence.",
+            },
+            {
+              title: "Hot Picks",
+              desc: "Discover trending items and great deals from fellow students.",
+            },
           ].map((feature, idx) => (
             <div className="col-md-4 mb-3" key={idx}>
               <div
@@ -143,31 +156,27 @@ const LandingPage = () => {
         </div>
       </div>
 
-     
-     <div className="container my-5">
-  <h3 className="mb-4 text-center fw-bold">Hot Picks from Students 🔥</h3>
-  <div className="row flex-row flex-nowrap overflow-auto">
-    {products.length === 0 ? (
-      <p className="text-center text-muted">No products available</p>
-    ) : (
-      products.slice(0, 6).map((product) => (
-        <div className="col-8 col-md-3 me-3" key={product.id}>
-          <div className="card shadow-sm h-100">
-            <img
-              src={product.image}
-              className="card-img-top"
-              alt={product.name}
-              style={{ height: "200px", objectFit: "cover" }}
-            />
-            
-          </div>
+      <div className="container my-5">
+        <h3 className="mb-4 text-center fw-bold">Hot Picks from Students 🔥</h3>
+        <div className="row flex-row flex-nowrap overflow-auto">
+          {products.length === 0 ? (
+            <p className="text-center text-muted">No products available</p>
+          ) : (
+            products.slice(0, 6).map((product) => (
+              <div className="col-8 col-md-3 me-3" key={product.id}>
+                <div className="card shadow-sm h-100">
+                  <img
+                    src={product.image}
+                    className="card-img-top"
+                    alt={product.name}
+                    style={{ height: "200px", objectFit: "cover" }}
+                  />
+                </div>
+              </div>
+            ))
+          )}
         </div>
-      ))
-    )}
-  </div>
-</div>
-
-      
+      </div>
     </>
   );
 };

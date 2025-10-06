@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { IoEyeOutline } from "react-icons/io5";
 import { FiEyeOff } from "react-icons/fi";
 
-import { captureStudentDetails } from '../service/StudentService';
+import { captureStudentDetails } from "../service/StudentService";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +36,7 @@ const SignUp = () => {
       suburb: "Cape Town City Center",
       city: "Cape Town",
       province: "Western Cape",
-      postalCode: "8001"
+      postalCode: "8001",
     },
     "New Market Junction": {
       streetNumber: "45",
@@ -44,7 +44,7 @@ const SignUp = () => {
       suburb: "Woodstock",
       city: "Cape Town",
       province: "Western Cape",
-      postalCode: "8005"
+      postalCode: "8005",
     },
     "Plein House": {
       streetNumber: "10",
@@ -52,36 +52,36 @@ const SignUp = () => {
       suburb: "Central",
       city: "Cape Town",
       province: "Western Cape",
-      postalCode: "8001"
-    }
+      postalCode: "8001",
+    },
   };
 
   const handleInputChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
   const handleResidenceChange = (residenceName) => {
     const addressInfo = residenceAddresses[residenceName];
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       residenceName,
-      ...addressInfo
+      ...addressInfo,
     }));
   };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords don't match.");
       setIsLoading(false);
       return;
     }
-    
+
     try {
       const studentData = {
         firstName: formData.firstName,
@@ -99,12 +99,12 @@ const SignUp = () => {
             suburb: formData.suburb,
             city: formData.city,
             province: formData.province,
-            postalCode: parseInt(formData.postalCode)
-          }
+            postalCode: parseInt(formData.postalCode),
+          },
         },
         productForSale: [],
         purchases: [],
-        requestSent: []
+        requestSent: [],
       };
 
       await captureStudentDetails(studentData);
@@ -124,14 +124,20 @@ const SignUp = () => {
     <div className="min-vh-100 bg-light d-flex align-items-center justify-content-center p-3">
       <div className="card w-100" style={{ maxWidth: "500px" }}>
         <div className="card-header text-center bg-white border-0">
-          <h2 className="card-title text-primary mb-1">Join Student Market Place</h2>
-          <p className="card-text text-muted">Create your account to start trading</p>
+          <h2 className="card-title text-primary mb-1">
+            Join Student Market Place
+          </h2>
+          <p className="card-text text-muted">
+            Create your account to start trading
+          </p>
         </div>
         <div className="card-body">
           <form onSubmit={handleSignUp}>
             <div className="row mb-3">
               <div className="col-md-6 mb-3 mb-md-0">
-                <label htmlFor="firstName" className="form-label">First Name(s)</label>
+                <label htmlFor="firstName" className="form-label">
+                  First Name(s)
+                </label>
                 <input
                   id="firstName"
                   name="firstName"
@@ -144,7 +150,9 @@ const SignUp = () => {
                 />
               </div>
               <div className="col-md-6">
-                <label htmlFor="lastName" className="form-label">Last Name</label>
+                <label htmlFor="lastName" className="form-label">
+                  Last Name
+                </label>
                 <input
                   id="lastName"
                   name="lastName"
@@ -159,7 +167,9 @@ const SignUp = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="email" className="form-label">Student Email</label>
+              <label htmlFor="email" className="form-label">
+                Student Email
+              </label>
               <input
                 id="email"
                 name="email"
@@ -173,7 +183,9 @@ const SignUp = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">Password</label>
+              <label htmlFor="password" className="form-label">
+                Password
+              </label>
               <div className="input-group">
                 <input
                   id="password"
@@ -189,13 +201,19 @@ const SignUp = () => {
                   className="btn btn-outline-secondary"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <FiEyeOff size={16} /> : <IoEyeOutline size={16} />}
+                  {showPassword ? (
+                    <FiEyeOff size={16} />
+                  ) : (
+                    <IoEyeOutline size={16} />
+                  )}
                 </button>
               </div>
             </div>
 
             <div className="mb-4">
-              <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+              <label htmlFor="confirmPassword" className="form-label">
+                Confirm Password
+              </label>
               <div className="input-group">
                 <input
                   id="confirmPassword"
@@ -211,16 +229,21 @@ const SignUp = () => {
                   className="btn btn-outline-secondary"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showConfirmPassword ? <FiEyeOff size={16} /> : <IoEyeOutline size={16} />}
+                  {showConfirmPassword ? (
+                    <FiEyeOff size={16} />
+                  ) : (
+                    <IoEyeOutline size={16} />
+                  )}
                 </button>
               </div>
             </div>
 
-            
             <div className="mb-4">
               <h5 className="mb-3">Residence Information</h5>
               <div className="mb-3">
-                <label htmlFor="residenceName" className="form-label">Residence Name</label>
+                <label htmlFor="residenceName" className="form-label">
+                  Residence Name
+                </label>
                 <select
                   className="form-select"
                   onChange={(e) => handleResidenceChange(e.target.value)}
@@ -228,13 +251,17 @@ const SignUp = () => {
                 >
                   <option value="">Select a residence</option>
                   <option value="President House">President House</option>
-                  <option value="New Market Junction">New Market Junction</option>
+                  <option value="New Market Junction">
+                    New Market Junction
+                  </option>
                   <option value="Plein House">Plein House</option>
                 </select>
               </div>
               <div className="row mb-3">
                 <div className="col-md-6 mb-3 mb-md-0">
-                  <label htmlFor="roomNumber" className="form-label">Room Number</label>
+                  <label htmlFor="roomNumber" className="form-label">
+                    Room Number
+                  </label>
                   <input
                     id="roomNumber"
                     name="roomNumber"
@@ -247,7 +274,9 @@ const SignUp = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="floorNumber" className="form-label">Floor Number</label>
+                  <label htmlFor="floorNumber" className="form-label">
+                    Floor Number
+                  </label>
                   <input
                     id="floorNumber"
                     name="floorNumber"
@@ -261,7 +290,9 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="mb-3">
-                <label htmlFor="building" className="form-label">Building</label>
+                <label htmlFor="building" className="form-label">
+                  Building
+                </label>
                 <input
                   id="building"
                   name="building"
@@ -275,12 +306,13 @@ const SignUp = () => {
               </div>
             </div>
 
-      
             <div className="mb-4">
               <h5 className="mb-3">Address Information</h5>
               <div className="row mb-3">
                 <div className="col-md-6 mb-3 mb-md-0">
-                  <label htmlFor="streetNumber" className="form-label">Street Number</label>
+                  <label htmlFor="streetNumber" className="form-label">
+                    Street Number
+                  </label>
                   <input
                     id="streetNumber"
                     name="streetNumber"
@@ -294,7 +326,9 @@ const SignUp = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="streetName" className="form-label">Street Name</label>
+                  <label htmlFor="streetName" className="form-label">
+                    Street Name
+                  </label>
                   <input
                     id="streetName"
                     name="streetName"
@@ -309,7 +343,9 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="mb-3">
-                <label htmlFor="suburb" className="form-label">Suburb</label>
+                <label htmlFor="suburb" className="form-label">
+                  Suburb
+                </label>
                 <input
                   id="suburb"
                   name="suburb"
@@ -324,7 +360,9 @@ const SignUp = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6 mb-3 mb-md-0">
-                  <label htmlFor="city" className="form-label">City</label>
+                  <label htmlFor="city" className="form-label">
+                    City
+                  </label>
                   <input
                     id="city"
                     name="city"
@@ -338,7 +376,9 @@ const SignUp = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="province" className="form-label">Province</label>
+                  <label htmlFor="province" className="form-label">
+                    Province
+                  </label>
                   <input
                     id="province"
                     name="province"
@@ -353,7 +393,9 @@ const SignUp = () => {
                 </div>
               </div>
               <div className="mb-3">
-                <label htmlFor="postalCode" className="form-label">Postal Code</label>
+                <label htmlFor="postalCode" className="form-label">
+                  Postal Code
+                </label>
                 <input
                   id="postalCode"
                   name="postalCode"
@@ -368,23 +410,32 @@ const SignUp = () => {
               </div>
             </div>
 
-            <button 
-              type="submit" 
-              className="btn btn-primary w-100 py-2" 
+            <button
+              type="submit"
+              className="btn btn-primary w-100 py-2"
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
                   Creating account...
                 </>
-              ) : "Create Account"}
+              ) : (
+                "Create Account"
+              )}
             </button>
           </form>
           <div className="mt-4 text-center">
             <p className="text-muted">
               Already have an account?{" "}
-              <Link to="/" className="text-primary text-decoration-none fw-medium">
+              <Link
+                to="/"
+                className="text-primary text-decoration-none fw-medium"
+              >
                 Sign in
               </Link>
             </p>

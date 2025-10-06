@@ -1,7 +1,6 @@
-// pages/NotFound.jsx
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'react-bootstrap-icons';
+import React from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "react-bootstrap-icons";
 
 const NotFound = () => {
   return (

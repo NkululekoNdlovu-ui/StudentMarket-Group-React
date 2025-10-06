@@ -1,23 +1,22 @@
 import axios from "axios";
 
-const PRODUCT_API_BASE_URL = 'http://localhost:8080/api/product';
-// const TRANSACTION_API_BASE_URL = 'http://localhost:8181/api/transaction';
+const PRODUCT_API_BASE_URL = "http://localhost:8080/api/product";
 
-//saving to the db
+//saving student details to the db: Sign Up page
 export const capturedProductDetails = (formData) => {
   return axios.post(PRODUCT_API_BASE_URL + "/create", formData, {
     headers: {
-      "Content-Type": "multipart/form-data"
-    }
+      "Content-Type": "multipart/form-data",
+    },
   });
 };
 
 // Get all products and display them: Buy page
 export const getAllProducts = () => {
-  return axios.get(PRODUCT_API_BASE_URL + '/getAllProducts');
-}
+  return axios.get(PRODUCT_API_BASE_URL + "/getAllProducts");
+};
 
-//delete product 
+//delete product: Admin
 export const deleteProduct = (productId) => {
   return axios.delete(`${PRODUCT_API_BASE_URL}/delete/${productId}`);
 };
@@ -26,10 +25,6 @@ export const deleteProduct = (productId) => {
 export const getProductById = (id) => {
   return axios.get(`${PRODUCT_API_BASE_URL}/read/${id}`);
 };
-
-
-
-
 
 //making payment
 export const payForProduct = (product) => {
