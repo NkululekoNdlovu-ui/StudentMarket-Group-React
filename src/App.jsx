@@ -4,6 +4,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
+import RoleBasedRoute from "./components/RoleBasedRoute";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
@@ -26,27 +29,87 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ToastContainer />
     <BrowserRouter>
-      <Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
 
-      
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/" element={<Login />} />
+          {/* Student routes - require authentication */}
+          <Route 
+            path="/home" 
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/sell" 
+            element={
+              <PrivateRoute>
+                <Sell />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/pending" 
+            element={
+              <PrivateRoute>
+                <Pending />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/buy" 
+            element={
+              <PrivateRoute>
+                <Buy />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/transaction/:id" 
+            element={
+              <PrivateRoute>
+                <Transaction />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            } 
+          />
 
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/home" element={<Home />} /> 
-        <Route path="/about" element={<About />} />
-        <Route path="/sell" element={<Sell />} />
-        <Route path="/pending" element={<Pending />} />
-        <Route path="/buy" element={<Buy />} />
-        <Route path="/transaction/:id" element={<Transaction />} />
-        <Route path="/success" element={<SuccessPage />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        <Route path="/superadmin-dashboard" element={<SuperAdminDashboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          {/* Admin routes - require ADMIN or SUPER_ADMIN role */}
+          <Route 
+            path="/admin-dashboard" 
+            element={
+              <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                <AdminDashboard />
+              </RoleBasedRoute>
+            } 
+          />
+
+          {/* Super Admin routes - require SUPER_ADMIN role only */}
+          <Route 
+            path="/superadmin-dashboard" 
+            element={
+              <RoleBasedRoute allowedRoles={['SUPER_ADMIN']}>
+                <SuperAdminDashboard />
+              </RoleBasedRoute>
+            } 
+          />
+
+          {/* 404 Not Found */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   </QueryClientProvider>
 );

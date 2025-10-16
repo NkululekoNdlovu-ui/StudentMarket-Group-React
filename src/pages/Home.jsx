@@ -14,14 +14,16 @@ const Home = () => {
   useEffect(() => {
     getAllProducts()
       .then((response) => {
-        const apiProductsResponse = response.data.map((product) => ({
-          id: product.id,
-          name: product.productName,
-          price: product.price,
+        console.log("API Response:", response.data); // Debug log
+        const apiProductsResponse = response.data.map((product, index) => ({
+          id: product.id || product.productId || index, // Use fallback if id is undefined
+          name: product.productName || 'Unnamed Product',
+          price: product.price || 0,
           image: product.imageData
             ? `data:${product.imageType};base64,${product.imageData}`
             : placeholder,
         }));
+        console.log("Processed products:", apiProductsResponse); // Debug log
         setProducts(apiProductsResponse);
       })
       .catch((err) => console.error("Failed to fetch products:", err));
@@ -200,7 +202,7 @@ const Home = () => {
               {products.map((product, index) => (
                 <div
                   className={`carousel-item ${index === 0 ? "active" : ""}`}
-                  key={product.id}
+                  key={product.id ? `product-${product.id}` : `product-index-${index}`}
                 >
                   <Link
                     to={`/transaction/${product.id}`}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authenticateUser } from "../service/StudentService";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -9,32 +10,74 @@ const Login = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      console.log("🔑 Attempting login with:", {
+        email: credentials.identifier,
+        passwordLength: credentials.password.length
+      });
+
       const response = await authenticateUser({
         email: credentials.identifier,
         password: credentials.password,
       });
 
+      console.log("📨 Full login response:", response);
+      console.log("📊 Response status:", response.status);
+      console.log("📊 Response data:", response.data);
+
       const result = response.data;
       console.log("Login response:", result);
+      console.log("Login response data:", JSON.stringify(result, null, 2));
 
       if (response.status === 200 && result.success) {
-        const userData = { ...result.data, role: result.role };
-        localStorage.setItem("user", JSON.stringify(userData));
-
+        // Store IDs for backward compatibility
         if (result.data.studentId) {
           localStorage.setItem("studentId", result.data.studentId);
         }
+        if (result.data.administratorId) {
+          localStorage.setItem("adminId", result.data.administratorId);
+        }
+        if (result.data.superAdminId) {
+          localStorage.setItem("superAdminId", result.data.superAdminId);
+        }
 
-        if (result.role === "superadmin") {
+        // Use AuthContext to set authentication state
+        try {
+          console.log("About to call login with:", { 
+            token: result.token ? `${result.token.substring(0, 20)}...` : "No token",
+            role: result.role,
+            data: result.data
+          });
+          
+          login(result.token, result.role, result.data);
+          
+          console.log("Login called successfully, checking localStorage:");
+          console.log("Token:", localStorage.getItem('token') ? `${localStorage.getItem('token').substring(0, 20)}...` : "No token");
+          console.log("Role:", localStorage.getItem('role'));
+          console.log("UserData:", localStorage.getItem('userData'));
+          
+        } catch (error) {
+          console.error("Error storing authentication data:", error);
+          alert("Login failed due to invalid token. Please contact support.");
+          return;
+        }
+
+        // Redirect based on role
+        const role = result.role.toUpperCase();
+        console.log("Redirecting based on role:", role);
+        
+        if (role === "SUPER_ADMIN" || role === "SUPERADMIN") {
+          console.log("Navigating to super admin dashboard");
           navigate("/superadmin-dashboard");
           alert(`Welcome back, Super Admin ${result.data.username}!`);
-        } else if (result.role === "admin") {
+        } else if (role === "ADMIN") {
+          console.log("Navigating to admin dashboard");
           navigate("/admin-dashboard");
           alert(
             `Welcome back, Admin ${
@@ -42,15 +85,37 @@ const Login = () => {
             }!`
           );
         } else {
+          console.log("Navigating to home");
           navigate("/home");
           alert(`Welcome back, ${result.data.firstName}!`);
         }
       } else {
-        alert(result.message || "Login failed. Please check your credentials.");
+        console.error("❌ Login failed - Backend response:", result);
+        
+        // Show specific error message based on the response
+        if (result.message) {
+          alert(`Login failed: ${result.message}`);
+        } else {
+          alert("Login failed. Please check your credentials.");
+        }
       }
     } catch (error) {
-      console.error("Login error:", error);
-      alert("Login failed. Please check your credentials.");
+      console.error("💥 Login error (full details):", error);
+      console.error("💥 Error response:", error.response);
+      console.error("💥 Error response data:", error.response?.data);
+      console.error("💥 Error response status:", error.response?.status);
+      
+      if (error.response?.status === 401) {
+        alert("❌ Invalid email or password. Please check your credentials.");
+      } else if (error.response?.status === 403) {
+        alert("❌ Access forbidden. Your account may be disabled.");
+      } else if (error.response?.status === 500) {
+        alert("❌ Server error. Please try again later.");
+      } else if (error.response?.data?.message) {
+        alert(`❌ Login failed: ${error.response.data.message}`);
+      } else {
+        alert("❌ Login failed. Please check your credentials and try again.");
+      }
     } finally {
       setIsLoading(false);
     }
