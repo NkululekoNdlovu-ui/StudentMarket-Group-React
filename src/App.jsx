@@ -16,6 +16,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import About from "./pages/About";
+import SuccessPage from "./pages/Success";
 
 const queryClient = new QueryClient();
 
@@ -28,14 +31,17 @@ const App = () => (
       
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/" element={<Login />} />
 
         <Route path="/signup" element={<SignUp />} />
         <Route path="/home" element={<Home />} /> 
+        <Route path="/about" element={<About />} />
         <Route path="/sell" element={<Sell />} />
         <Route path="/pending" element={<Pending />} />
         <Route path="/buy" element={<Buy />} />
         <Route path="/transaction/:id" element={<Transaction />} />
+        <Route path="/success" element={<SuccessPage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/superadmin-dashboard" element={<SuperAdminDashboard />} />

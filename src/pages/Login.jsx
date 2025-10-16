@@ -123,6 +123,15 @@ const Login = () => {
                 "Sign In"
               )}
             </button>
+
+            <div className="text-center mt-3">
+              <Link
+                to="/forgot-password"
+                className="text-decoration-none text-primary fw-medium"
+              >
+                Forgot Password?
+              </Link>
+            </div>
           </form>
           <div className="mt-4 text-center">
             <p className="text-muted">
