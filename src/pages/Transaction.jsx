@@ -7,8 +7,10 @@ import {
   Truck,
   ExclamationTriangle,
 } from "react-bootstrap-icons";
-import { getProductById } from "../service/ProductService";
+import { getProductById, payForProduct } from "../service/ProductService";
 import { createTransaction } from "../service/TransactionService";
+import { useAuth } from "../context/AuthContext";
+import { getValidToken } from "../utils/authUtils";
 import PayQrCode from "../assets/PayQrCode.jpeg";
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -19,6 +21,7 @@ const stripePromise = loadStripe(
 const Transaction = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,6 +61,15 @@ const Transaction = () => {
   const handlePurchase = async () => {
     try {
       setProcessing(true);
+      setError(null);
+
+      // Authentication checks
+      if (!isAuthenticated() || !user || !user.data) {
+        setError("You must be logged in to make a purchase");
+        setProcessing(false);
+        navigate("/login");
+        return;
+      }
 
       if (!product) {
         setError("No product loaded");
@@ -65,30 +77,33 @@ const Transaction = () => {
         return;
       }
 
-      const studentId = localStorage.getItem("studentId");
-      if (!studentId) {
-        setError("You must be logged in to make a purchase");
+      // Check if user is trying to buy their own product
+      if (product.seller && user.data.studentId === product.seller.studentId) {
+        setError("You cannot purchase your own product");
         setProcessing(false);
         return;
       }
 
-      await createTransaction(id, studentId);
+      console.log("Creating transaction for product:", id, "buyer:", user.data.studentId);
+      
+      // Create transaction record
+      await createTransaction(id, user.data.studentId);
+      console.log("Transaction created successfully");
 
-      const response = await fetch(
-        `http://localhost:8080/api/product/checkout/${product.productId}`,
-        {
-          method: "POST",
-        }
-      );
+      // Create Stripe checkout session using the correct endpoint and port
+      console.log("Creating Stripe checkout session for product:", product.productId || id);
+      
+      const checkoutResponse = await payForProduct(product);
+      console.log("Stripe checkout response:", checkoutResponse.data);
 
-      const data = await response.json();
-      if (data.status !== "Success" || !data.sessionId) {
-        throw new Error(data.message || "Failed to create Stripe session");
+      if (checkoutResponse.data.status !== "Success" || !checkoutResponse.data.sessionId) {
+        throw new Error(checkoutResponse.data.message || "Failed to create Stripe session");
       }
 
+      // Redirect to Stripe checkout
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId,
+        sessionId: checkoutResponse.data.sessionId,
       });
 
       if (error) {
@@ -97,12 +112,11 @@ const Transaction = () => {
         setProcessing(false);
       } else {
         setSuccess(true);
-
         setTimeout(() => navigate("/home"), 5000);
       }
     } catch (err) {
       console.error("Purchase failed:", err);
-      setError(err.message || "Payment failed. Please try again.");
+      setError(err.response?.data?.message || err.message || "Payment failed. Please try again.");
       setProcessing(false);
     }
   };

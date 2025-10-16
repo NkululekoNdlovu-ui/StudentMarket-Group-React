@@ -1,28 +1,53 @@
 import axios from "axios";
 
-const REST_API_BASE_URL = "http://localhost:8080/api/superadmin";
+const REST_API_BASE_URL = "http://localhost:8181/api/superadmin";
 
 // Get all administrators
 export const getAllAdmins = () => {
-  return axios.get(`${REST_API_BASE_URL}/admin/getAll`);
+  const token = localStorage.getItem("token");
+  return axios.get(`${REST_API_BASE_URL}/admin/getAll`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 // Create a new administrator
 export const createAdmin = (adminData) => {
-  return axios.post(`${REST_API_BASE_URL}/admin/create`, adminData);
+  const token = localStorage.getItem("token");
+  return axios.post(`${REST_API_BASE_URL}/admin/create`, adminData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 // Update an existing administrator
 export const updateAdmin = (adminData) => {
-  return axios.put(`${REST_API_BASE_URL}/admin/update`, adminData);
+  const token = localStorage.getItem("token");
+  return axios.put(`${REST_API_BASE_URL}/admin/update`, adminData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 // Delete an administrator
 export const deleteAdmin = (adminId) => {
-  return axios.delete(`${REST_API_BASE_URL}/admin/delete/${adminId}`);
+  const token = localStorage.getItem("token");
+  return axios.delete(`${REST_API_BASE_URL}/admin/delete/${adminId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 // Get administrator by ID
 export const getAdminById = (adminId) => {
-  return axios.get(`${REST_API_BASE_URL}/admin/read/${adminId}`);
+  const token = localStorage.getItem("token");
+  return axios.get(`${REST_API_BASE_URL}/admin/read/${adminId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };

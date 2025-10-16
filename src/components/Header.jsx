@@ -1,21 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import logoSt from "../assets/logoSt.png";
 
 const Header = () => {
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Read user from localStorage on component mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
-
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("studentId");
-    setUser(null);
+    logout();
     navigate("/");
   };
 
@@ -68,7 +61,7 @@ const Header = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                {user?.firstName || "Profile"}
+                {user?.data?.firstName || "Profile"}
               </a>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                 <li>
