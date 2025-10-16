@@ -19,6 +19,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import About from "./pages/About";
+import SuccessPage from "./pages/Success";
 
 const queryClient = new QueryClient();
 

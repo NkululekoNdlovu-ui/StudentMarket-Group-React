@@ -58,3 +58,18 @@ export const deleteStudent = (studentId) => {
     },
   });
 };
+
+// Forgot Password - Send OTP
+export const sendOtp = (email) => {
+  return axios.post(`${REST_API_BASE_URL}/student/forgot-password/send-otp`, null, {
+    params: { email },
+  });
+};
+
+// Forgot Password - Reset Password
+export const resetPassword = (email, otp, newPassword) => {
+  return axios.post(`${REST_API_BASE_URL}/student/forgot-password/reset`, null, {
+    params: { email, otp, newPassword },
+  });
+};
+
