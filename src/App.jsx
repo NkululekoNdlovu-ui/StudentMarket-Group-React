@@ -34,6 +34,7 @@ const App = () => (
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/signup" element={<SignUp />} />
 
           {/* Student routes - require authentication */}
@@ -66,6 +67,22 @@ const App = () => (
             element={
               <PrivateRoute>
                 <Buy />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/success" 
+            element={
+              <PrivateRoute>
+                <SuccessPage/>
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/about" 
+            element={
+              <PrivateRoute>
+                <About />
               </PrivateRoute>
             } 
           />
