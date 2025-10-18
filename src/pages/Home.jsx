@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [student, setStudent] = useState({ firstName: "" });
-  const [isHoveringBuy, setIsHoveringBuy] = useState(false);
 
   useEffect(() => {
     getAllProducts()
@@ -22,7 +21,13 @@ const Home = () => {
             ? `data:${product.imageType};base64,${product.imageData}`
             : placeholder,
         }));
-        setProducts(apiProductsResponse);
+
+        // Sort by price ascending and select top 4 cheapest
+        const lowestProducts = apiProductsResponse
+          .sort((a, b) => a.price - b.price)
+          .slice(0, 4);
+
+        setProducts(lowestProducts);
       })
       .catch((err) => console.error("Failed to fetch products:", err));
   }, []);
@@ -35,21 +40,34 @@ const Home = () => {
     }
   }, []);
 
-  const buyButtonStyle = {
-    background: isHoveringBuy
-      ? "linear-gradient(90deg, #1e64e0, #5ca0f0)"
-      : "linear-gradient(90deg, #2575fc, #6fb1fc)",
-    border: "none",
-    transform: isHoveringBuy ? "translateY(-2px)" : "translateY(0)",
-    transition: "all 0.2s ease-in-out",
-    boxShadow: isHoveringBuy
-      ? "0 6px 15px rgba(37, 117, 252, 0.6)"
-      : "0 2px 5px rgba(0,0,0,0.2)",
+  
+  const hotDealsContainerStyle = {
+    padding: "60px 0",
+    textAlign: "center",
+    background: "linear-gradient(to bottom, #ffffff 0%, #f0f2f5 100%)",
   };
 
-  const sellButtonStyle = {
-    background: "linear-gradient(90deg,#28a745,#5dd17c)",
-    border: "none",
+  const hotDealsTitleStyle = {
+    fontSize: "2.5rem",
+    fontWeight: "800",
+    color: "#ff6a00",
+    textTransform: "uppercase",
+    letterSpacing: "2px",
+    borderBottom: "4px solid #2575fc",
+    display: "inline-block",
+    paddingBottom: "8px",
+    marginBottom: "50px",
+  };
+
+  const productCardStyle = {
+    backgroundColor: "#ffffff",
+    borderRadius: "10px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+    border: "1px solid #dee2e6",
+    overflow: "hidden",
+    transition:
+      "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+    height: "100%",
   };
 
   return (
@@ -76,7 +94,7 @@ const Home = () => {
             width: "100%",
             height: "100%",
             background:
-              "linear-gradient(to top, rgb(55, 117, 241) 0%, rgba(255, 255, 255, 0.9) 100%)",
+              "linear-gradient(to top, rgba(55, 117, 241, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)",
             zIndex: 1,
           }}
         ></div>
@@ -95,10 +113,7 @@ const Home = () => {
           />
           <h1
             className="fw-bold display-5"
-            style={{
-              textShadow: "0 0 10px rgba(0,0,0,0.9)",
-              color: "white",
-            }}
+            style={{ textShadow: "0 0 10px rgba(0,0,0,0.9)", color: "white" }}
           >
             Welcome, {student.firstName || "Student"}!
           </h1>
@@ -112,29 +127,11 @@ const Home = () => {
           >
             Your campus marketplace for great deals and easy sales.
           </p>
-
-          <div className="mt-3">
-            <Link
-              className="btn btn-lg rounded-pill me-3"
-              style={buyButtonStyle}
-              to="/buy"
-              onMouseEnter={() => setIsHoveringBuy(true)}
-              onMouseLeave={() => setIsHoveringBuy(false)}
-            >
-              Browse & Buy Items
-            </Link>
-            <Link
-              className="btn btn-lg rounded-pill"
-              style={sellButtonStyle}
-              to="/sell"
-            >
-              Start Selling
-            </Link>
-          </div>
         </div>
       </div>
 
-      <div className="container py-4 text-center">
+      {/* Feature Blocks */}
+      <div className="container py-5 text-center">
         <div className="row justify-content-center">
           <div className="col-md-10">
             <h2 className="fw-light mb-4 text-muted">
@@ -164,122 +161,101 @@ const Home = () => {
         </div>
       </div>
 
-      <div
-        className="container my-5"
-        style={{
-          padding: "30px",
-          textAlign: "center",
-          backgroundColor: "#f8f9fa",
-          borderRadius: "15px",
-          boxShadow: "0 5px 15px rgba(0,0,0,0.05)",
-        }}
-      >
-        <h2
-          className="fw-bold mb-5"
-          style={{
-            borderBottom: "4px solid #ff6a00",
-            display: "inline-block",
-            paddingBottom: "8px",
-          }}
-        >
-          Featured Hot Picks 🔥
-        </h2>
+      {/* Hot Deals Section */}
+      <div className="container-fluid" style={hotDealsContainerStyle}>
+        <div className="container">
+          <h2 style={hotDealsTitleStyle}>Hot Deals 🔥</h2>
 
-        {products.length === 0 ? (
-          <div className="alert alert-info" role="alert">
-            No hot picks available right now. Be the first to list an item!
-          </div>
-        ) : (
-          <div
-            id="productSlideshow"
-            className="carousel slide"
-            data-bs-ride="carousel"
-            data-bs-interval="4000"
-          >
-            <div className="carousel-inner" style={{ borderRadius: "10px" }}>
-              {products.map((product, index) => (
-                <div
-                  className={`carousel-item ${index === 0 ? "active" : ""}`}
-                  key={product.id}
-                >
-                  <Link
-                    to={`/transaction/${product.id}`}
-                    className="d-block w-100 position-relative"
-                  >
-                    <img
-                      src={product.image}
-                      className="d-block w-100"
-                      alt={product.name}
-                      style={{
-                        height: "400px",
-                        objectFit: "contain",
-                        borderRadius: "10px",
+          {products.length === 0 ? (
+            <div
+              className="alert alert-info"
+              role="alert"
+              style={{ borderRadius: "10px" }}
+            >
+              No hot deals available right now. Be the first to list an item!
+            </div>
+          ) : (
+            <>
+              <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+                {products.map((product) => (
+                  <div className="col d-flex" key={product.id}>
+                    <Link
+                      to={`/transaction/${product.id}`}
+                      className="d-block w-100 text-decoration-none"
+                      style={productCardStyle}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-8px)";
+                        e.currentTarget.style.boxShadow =
+                          "0 18px 30px rgba(37, 117, 252, 0.25)";
+                        e.currentTarget.style.border = "1px solid #2575fc";
                       }}
-                    />
-
-                    <div
-                      className="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded p-3"
-                      style={{
-                        bottom: "20px",
-                        backdropFilter: "blur(4px)",
-                        maxWidth: "80%",
-                        left: "50%",
-                        transform: "translateX(-50%)",
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow =
+                          "0 4px 12px rgba(0,0,0,0.08)";
+                        e.currentTarget.style.border = "1px solid #dee2e6";
                       }}
                     >
-                      <h4 className="text-white mb-1 fw-bold">{product.name}</h4>
-                      <p className="text-warning h3 fw-bolder">R {product.price}</p>
-                    </div>
-                  </Link>
-                </div>
-              ))}
-            </div>
+                      <div
+                        className="card-img-top p-3"
+                        style={{
+                          backgroundColor: "#fefefe",
+                          height: "230px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          style={{
+                            maxHeight: "100%",
+                            maxWidth: "100%",
+                            objectFit: "contain",
+                            borderRadius: "5px",
+                          }}
+                        />
+                      </div>
 
-            {products.length > 1 && (
-              <>
-                {/* <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#productSlideshow"
-                  data-bs-slide="prev"
-                >
-                  <span
-                    className="carousel-control-prev-icon"
-                    style={{
-                      backgroundColor: "rgba(37, 117, 252, 0.9)",
-                      borderRadius: "50%",
-                      padding: "20px",
-                    }}
-                  ></span>
-                </button>
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#productSlideshow"
-                  data-bs-slide="next"
-                >
-                  <span
-                    className="carousel-control-next-icon"
-                    style={{
-                      backgroundColor: "rgba(37, 117, 252, 0.9)",
-                      borderRadius: "50%",
-                      padding: "20px",
-                    }}
-                  ></span>
-                </button> */}
-              </>
-            )}
+                      <div
+                        className="p-3 text-center"
+                        style={{
+                          borderTop: "1px solid #f8f9fa",
+                        }}
+                      >
+                        <span
+                          className="badge rounded-pill text-bg-danger mb-2"
+                          style={{ fontSize: "0.85rem", padding: "0.4em 0.8em" }}
+                        >
+                          HOT DEAL
+                        </span>
+                        <h5
+                          className="mb-2 fw-bolder text-truncate"
+                          style={{ color: "#343a40" }}
+                        >
+                          {product.name}
+                        </h5>
+                        <p className="h4 fw-bolder mb-0" style={{ color: "#ff6a00" }}>
+                          R {product.price}
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
 
-            <div className="col-12 mt-4">
-              <Link
-                to="/buy"
-                className="btn btn-outline-primary btn-lg rounded-pill"
-              >
-                View All {products.length > 0 ? products.length + "+" : ""} Items
-              </Link>
-            </div>
-          </div>
-        )}
+              <div className="mt-4">
+                <Link
+                  to="/buy"
+                  className="btn btn-outline-primary btn-lg rounded-pill px-5 py-3 fw-bold"
+                >
+                  View All Products
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <Footer />

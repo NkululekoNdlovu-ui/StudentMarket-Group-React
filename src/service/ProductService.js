@@ -2,7 +2,7 @@ import axios from "axios";
 
 const PRODUCT_API_BASE_URL = "http://localhost:8080/api/product";
 
-//saving student details to the db: Sign Up page
+// Saving student details to the db: Sign Up page
 export const capturedProductDetails = (formData) => {
   return axios.post(PRODUCT_API_BASE_URL + "/create", formData, {
     headers: {
@@ -16,7 +16,7 @@ export const getAllProducts = () => {
   return axios.get(PRODUCT_API_BASE_URL + "/getAllProducts");
 };
 
-//delete product: Admin
+// Delete product: Admin
 export const deleteProduct = (productId) => {
   return axios.delete(`${PRODUCT_API_BASE_URL}/delete/${productId}`);
 };
@@ -26,7 +26,16 @@ export const getProductById = (id) => {
   return axios.get(`${PRODUCT_API_BASE_URL}/read/${id}`);
 };
 
-//making payment
-export const payForProduct = (product) => {
-  return axios.post(REST_API_BASE_URL + `/checkout` + product);
+// Get available products by student
+export const getAvailableProductsByStudent = (studentId) => {
+  return axios.get(`${PRODUCT_API_BASE_URL}/available/${studentId}`);
+};
+
+// Update product
+export const updateProduct = (productId, updatedProduct) => {
+  return axios.put(`${PRODUCT_API_BASE_URL}/update/${productId}`, updatedProduct);
+};
+
+export const getSoldProductsByStudent = (studentId) => {
+  return axios.get(`${PRODUCT_API_BASE_URL}/sold/${studentId}`);
 };
