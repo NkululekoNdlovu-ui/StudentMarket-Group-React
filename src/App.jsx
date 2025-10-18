@@ -11,7 +11,6 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import Sell from "./pages/Sell";
-import Pending from "./pages/Pending";
 import Buy from "./pages/Buy";
 import Transaction from "./pages/Transaction";
 import Profile from "./pages/Profile";
@@ -22,6 +21,7 @@ import LandingPage from "./pages/LandingPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import About from "./pages/About";
 import SuccessPage from "./pages/Success";
+import Cancel from "./pages/Cancel";
 
 const queryClient = new QueryClient();
 
@@ -55,10 +55,10 @@ const App = () => (
             } 
           />
           <Route 
-            path="/pending" 
+            path="/cancel" 
             element={
               <PrivateRoute>
-                <Pending />
+                <Cancel />
               </PrivateRoute>
             } 
           />
