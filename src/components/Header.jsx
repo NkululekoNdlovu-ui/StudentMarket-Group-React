@@ -1,45 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import logoSt from "../assets/logoSt.png";
 
 const Header = () => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  // Read user and studentId from localStorage on component mount
+  // Check login status on mount and listen for localStorage changes
   useEffect(() => {
     const checkLoginStatus = () => {
-        const storedUser = localStorage.getItem("user");
-        const studentId = localStorage.getItem("studentId");
-        
-        if (storedUser && studentId) {
-            const parsedUser = JSON.parse(storedUser);
-            setUser(parsedUser);
-            setIsLoggedIn(true);
-        } else {
-            setUser(null);
-            setIsLoggedIn(false);
-        }
+      const storedUser = localStorage.getItem("user");
+      const studentId = localStorage.getItem("studentId");
+
+      if (storedUser && studentId) {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setIsLoggedIn(true);
+      } else {
+        setUser(null);
+        setIsLoggedIn(false);
+      }
     };
 
-    checkLoginStatus(); // Initial check on mount
+    checkLoginStatus();
 
-    // We keep the storage listener to ensure the header updates if the name changes
     const handleStorageChange = (e) => {
-        if (e.key === 'user' || e.key === null) {
-            checkLoginStatus();
-        }
+      if (e.key === "user" || e.key === null) {
+        checkLoginStatus();
+      }
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    
+    window.addEventListener("storage", handleStorageChange);
+
     return () => {
-        window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
   const handleLogout = () => {
+    logout();
     localStorage.removeItem("user");
     localStorage.removeItem("studentId");
     setUser(null);
@@ -47,20 +49,19 @@ const Header = () => {
     navigate("/");
   };
 
-  // Define the ProfileDropdown based on login status
+  // Profile dropdown based on login status
   const ProfileDropdown = () => {
     if (isLoggedIn) {
       return (
         <li className="nav-item dropdown">
           <a
-            className="nav-link dropdown-toggle btn btn-outline-secondary rounded-pill px-3 fw-semibold" // Removed avatar classes
+            className="nav-link dropdown-toggle btn btn-outline-secondary rounded-pill px-3 fw-semibold"
             href="#!"
             id="profileDropdown"
             role="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            {/* Display first name only, no picture */}
             {user?.firstName || "Profile"}
           </a>
           <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -70,10 +71,7 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <button
-                className="dropdown-item"
-                onClick={handleLogout}
-              >
+              <button className="dropdown-item" onClick={handleLogout}>
                 Logout
               </button>
             </li>
@@ -91,11 +89,10 @@ const Header = () => {
     );
   };
 
-
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
       <div className="container">
-        {/* Logo and Brand Name */}
+        {/* Logo */}
         <Link className="navbar-brand d-flex align-items-center" to="/home">
           <img src={logoSt} alt="Logo" width="40" className="me-2" />
           <span style={{ color: "#333", fontWeight: "bold", fontSize: "1.2rem" }}>
@@ -117,15 +114,12 @@ const Header = () => {
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto align-items-lg-center">
-            
-            {/* Home Link */}
             <li className="nav-item me-2">
               <NavLink className="nav-link fw-semibold" to="/home" end>
                 Home
               </NavLink>
             </li>
-            
-            {/* Buy/Sell buttons (Visible when logged in) */}
+
             {isLoggedIn && (
               <>
                 <li className="nav-item me-2">
@@ -141,7 +135,7 @@ const Header = () => {
               </>
             )}
 
-            {/* Profile/Login Dropdown (Now without picture) */}
+            {/* Profile/Login Dropdown */}
             <ProfileDropdown />
           </ul>
         </div>

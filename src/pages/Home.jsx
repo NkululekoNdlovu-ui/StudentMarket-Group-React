@@ -10,19 +10,20 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [student, setStudent] = useState({ firstName: "" });
 
+  // Fetch products from API
   useEffect(() => {
     getAllProducts()
       .then((response) => {
-        const apiProductsResponse = response.data.map((product) => ({
-          id: product.id,
-          name: product.productName,
-          price: product.price,
+        const apiProductsResponse = response.data.map((product, index) => ({
+          id: product.id || product.productId || index,
+          name: product.productName || "Unnamed Product",
+          price: product.price || 0,
           image: product.imageData
             ? `data:${product.imageType};base64,${product.imageData}`
             : placeholder,
         }));
 
-        // Sort by price ascending and select top 4 cheapest
+        // Sort by price ascending and pick top 4 cheapest products
         const lowestProducts = apiProductsResponse
           .sort((a, b) => a.price - b.price)
           .slice(0, 4);
@@ -32,6 +33,7 @@ const Home = () => {
       .catch((err) => console.error("Failed to fetch products:", err));
   }, []);
 
+  // Get student name from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -40,7 +42,6 @@ const Home = () => {
     }
   }, []);
 
-  
   const hotDealsContainerStyle = {
     padding: "60px 0",
     textAlign: "center",
@@ -74,6 +75,7 @@ const Home = () => {
     <>
       <Header />
 
+      {/* Hero Section */}
       <div
         style={{
           height: "35vh",
@@ -175,85 +177,74 @@ const Home = () => {
               No hot deals available right now. Be the first to list an item!
             </div>
           ) : (
-            <>
-              <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
-                {products.map((product) => (
-                  <div className="col d-flex" key={product.id}>
-                    <Link
-                      to={`/transaction/${product.id}`}
-                      className="d-block w-100 text-decoration-none"
-                      style={productCardStyle}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "translateY(-8px)";
-                        e.currentTarget.style.boxShadow =
-                          "0 18px 30px rgba(37, 117, 252, 0.25)";
-                        e.currentTarget.style.border = "1px solid #2575fc";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow =
-                          "0 4px 12px rgba(0,0,0,0.08)";
-                        e.currentTarget.style.border = "1px solid #dee2e6";
+            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+              {products.map((product) => (
+                <div className="col d-flex" key={product.id}>
+                  <Link
+                    to={`/transaction/${product.id}`}
+                    className="d-block w-100 text-decoration-none"
+                    style={productCardStyle}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-8px)";
+                      e.currentTarget.style.boxShadow =
+                        "0 18px 30px rgba(37, 117, 252, 0.25)";
+                      e.currentTarget.style.border = "1px solid #2575fc";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow =
+                        "0 4px 12px rgba(0,0,0,0.08)";
+                      e.currentTarget.style.border = "1px solid #dee2e6";
+                    }}
+                  >
+                    <div
+                      className="card-img-top p-3"
+                      style={{
+                        backgroundColor: "#fefefe",
+                        height: "230px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      <div
-                        className="card-img-top p-3"
+                      <img
+                        src={product.image}
+                        alt={product.name}
                         style={{
-                          backgroundColor: "#fefefe",
-                          height: "230px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                          maxHeight: "100%",
+                          maxWidth: "100%",
+                          objectFit: "contain",
+                          borderRadius: "5px",
                         }}
-                      >
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          style={{
-                            maxHeight: "100%",
-                            maxWidth: "100%",
-                            objectFit: "contain",
-                            borderRadius: "5px",
-                          }}
-                        />
-                      </div>
+                      />
+                    </div>
 
-                      <div
-                        className="p-3 text-center"
-                        style={{
-                          borderTop: "1px solid #f8f9fa",
-                        }}
+                    <div
+                      className="p-3 text-center"
+                      style={{
+                        borderTop: "1px solid #f8f9fa",
+                      }}
+                    >
+                      <span
+                        className="badge rounded-pill text-bg-danger mb-2"
+                        style={{ fontSize: "0.85rem", padding: "0.4em 0.8em" }}
                       >
-                        <span
-                          className="badge rounded-pill text-bg-danger mb-2"
-                          style={{ fontSize: "0.85rem", padding: "0.4em 0.8em" }}
-                        >
-                          HOT DEAL
-                        </span>
-                        <h5
-                          className="mb-2 fw-bolder text-truncate"
-                          style={{ color: "#343a40" }}
-                        >
-                          {product.name}
-                        </h5>
-                        <p className="h4 fw-bolder mb-0" style={{ color: "#ff6a00" }}>
-                          R {product.price}
-                        </p>
-                      </div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4">
-                <Link
-                  to="/buy"
-                  className="btn btn-outline-primary btn-lg rounded-pill px-5 py-3 fw-bold"
-                >
-                  View All Products
-                </Link>
-              </div>
-            </>
+                        HOT DEAL
+                      </span>
+                      <h5
+                        className="mb-2 fw-bolder text-truncate"
+                        style={{ color: "#343a40" }}
+                      >
+                        {product.name}
+                      </h5>
+                      <p className="h4 fw-bolder mb-0" style={{ color: "#ff6a00" }}>
+                        R {product.price}
+                      </p>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
