@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getValidToken } from "../utils/authUtils";
 
-const PRODUCT_API_BASE_URL = "http://localhost:8080/api/product";
+const PRODUCT_API_BASE_URL = "http://localhost:8181/api/product";
 
 // Saving student details to the db: Sign Up page
 export const capturedProductDetails = (formData) => {
