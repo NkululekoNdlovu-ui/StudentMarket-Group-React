@@ -5,30 +5,27 @@ import logoSt from "../assets/logoSt.png";
 
 const Header = () => {
   const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  // Check login status on mount and listen for localStorage changes
+  // Check login status on mount
   useEffect(() => {
     const checkLoginStatus = () => {
-      const storedUser = localStorage.getItem("user");
+      // Login stores user info in 'userData'
+      const storedUser = localStorage.getItem("userData");
       const studentId = localStorage.getItem("studentId");
 
       if (storedUser && studentId) {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        setIsLoggedIn(true);
+        setUser(JSON.parse(storedUser));
       } else {
         setUser(null);
-        setIsLoggedIn(false);
       }
     };
 
     checkLoginStatus();
 
     const handleStorageChange = (e) => {
-      if (e.key === "user" || e.key === null) {
+      if (e.key === "userData" || e.key === "studentId") {
         checkLoginStatus();
       }
     };
@@ -42,16 +39,15 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
-    localStorage.removeItem("user");
+    localStorage.removeItem("userData");
     localStorage.removeItem("studentId");
+    localStorage.removeItem("token");
     setUser(null);
-    setIsLoggedIn(false);
     navigate("/");
   };
 
-  // Profile dropdown based on login status
   const ProfileDropdown = () => {
-    if (isLoggedIn) {
+    if (user) {
       return (
         <li className="nav-item dropdown">
           <a
@@ -62,7 +58,7 @@ const Header = () => {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            {user?.firstName || "Profile"}
+            {user.firstName || "Profile"}
           </a>
           <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
             <li>
@@ -92,7 +88,6 @@ const Header = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
       <div className="container">
-        {/* Logo */}
         <Link className="navbar-brand d-flex align-items-center" to="/home">
           <img src={logoSt} alt="Logo" width="40" className="me-2" />
           <span style={{ color: "#333", fontWeight: "bold", fontSize: "1.2rem" }}>
@@ -120,7 +115,7 @@ const Header = () => {
               </NavLink>
             </li>
 
-            {isLoggedIn && (
+            {user && (
               <>
                 <li className="nav-item me-2">
                   <Link className="btn btn-primary rounded-pill px-4" to="/buy">
@@ -135,7 +130,6 @@ const Header = () => {
               </>
             )}
 
-            {/* Profile/Login Dropdown */}
             <ProfileDropdown />
           </ul>
         </div>

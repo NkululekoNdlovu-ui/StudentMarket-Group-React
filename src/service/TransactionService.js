@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getValidToken } from "../utils/authUtils";
 
-const REST_API_BASE_URL = "http://localhost:8181/api";
+const REST_API_BASE_URL = "http://localhost:8080/api";
 
 //create a transaction record for a product sold: Transaction page
 export const createTransaction = (productId, buyerId) => {

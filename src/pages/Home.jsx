@@ -177,74 +177,86 @@ const Home = () => {
               No hot deals available right now. Be the first to list an item!
             </div>
           ) : (
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
-              {products.map((product) => (
-                <div className="col d-flex" key={product.id}>
-                  <Link
-                    to={`/transaction/${product.id}`}
-                    className="d-block w-100 text-decoration-none"
-                    style={productCardStyle}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-8px)";
-                      e.currentTarget.style.boxShadow =
-                        "0 18px 30px rgba(37, 117, 252, 0.25)";
-                      e.currentTarget.style.border = "1px solid #2575fc";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow =
-                        "0 4px 12px rgba(0,0,0,0.08)";
-                      e.currentTarget.style.border = "1px solid #dee2e6";
-                    }}
-                  >
-                    <div
-                      className="card-img-top p-3"
-                      style={{
-                        backgroundColor: "#fefefe",
-                        height: "230px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+            <>
+              <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+                {products.map((product) => (
+                  <div className="col d-flex" key={product.id}>
+                    <Link
+                      to={`/transaction/${product.id}`}
+                      className="d-block w-100 text-decoration-none"
+                      style={productCardStyle}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-8px)";
+                        e.currentTarget.style.boxShadow =
+                          "0 18px 30px rgba(37, 117, 252, 0.25)";
+                        e.currentTarget.style.border = "1px solid #2575fc";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow =
+                          "0 4px 12px rgba(0,0,0,0.08)";
+                        e.currentTarget.style.border = "1px solid #dee2e6";
                       }}
                     >
-                      <img
-                        src={product.image}
-                        alt={product.name}
+                      <div
+                        className="card-img-top p-3"
                         style={{
-                          maxHeight: "100%",
-                          maxWidth: "100%",
-                          objectFit: "contain",
-                          borderRadius: "5px",
+                          backgroundColor: "#fefefe",
+                          height: "230px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
-                      />
-                    </div>
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          style={{
+                            maxHeight: "100%",
+                            maxWidth: "100%",
+                            objectFit: "contain",
+                            borderRadius: "5px",
+                          }}
+                        />
+                      </div>
 
-                    <div
-                      className="p-3 text-center"
-                      style={{
-                        borderTop: "1px solid #f8f9fa",
-                      }}
-                    >
-                      <span
-                        className="badge rounded-pill text-bg-danger mb-2"
-                        style={{ fontSize: "0.85rem", padding: "0.4em 0.8em" }}
+                      <div
+                        className="p-3 text-center"
+                        style={{
+                          borderTop: "1px solid #f8f9fa",
+                        }}
                       >
-                        HOT DEAL
-                      </span>
-                      <h5
-                        className="mb-2 fw-bolder text-truncate"
-                        style={{ color: "#343a40" }}
-                      >
-                        {product.name}
-                      </h5>
-                      <p className="h4 fw-bolder mb-0" style={{ color: "#ff6a00" }}>
-                        R {product.price}
-                      </p>
-                    </div>
-                  </Link>
-                </div>
-              ))}
-            </div>
+                        <span
+                          className="badge rounded-pill text-bg-danger mb-2"
+                          style={{ fontSize: "0.85rem", padding: "0.4em 0.8em" }}
+                        >
+                          HOT DEAL
+                        </span>
+                        <h5
+                          className="mb-2 fw-bolder text-truncate"
+                          style={{ color: "#343a40" }}
+                        >
+                          {product.name}
+                        </h5>
+                        <p className="h4 fw-bolder mb-0" style={{ color: "#ff6a00" }}>
+                          R {product.price}
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+
+              {/* View All Products Button */}
+              <div className="mt-4 text-center">
+                <Link
+                  to="/buy"
+                  className="btn btn-outline-primary btn-lg rounded-pill px-5 py-3 fw-bold"
+                >
+                  View All Products
+                </Link>
+              </div>
+            </>
           )}
         </div>
       </div>
