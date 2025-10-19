@@ -355,7 +355,6 @@ const Buy = () => {
               </div>
             </div>
 
-            {/* Buy Now Button */}
             <div className="mt-4">
               <Link
                 to={`/transaction/${selectedProduct.productId}`}

@@ -65,7 +65,6 @@ const Transaction = () => {
       setProcessing(true);
       setError(null);
 
-      // Authentication checks
       if (!isAuthenticated() || !user || !user.data) {
         setError("You must be logged in to make a purchase");
         setProcessing(false);
@@ -79,9 +78,7 @@ const Transaction = () => {
         return;
       }
 
-      // Check if user is trying to buy their own product
       if (product.seller && user.data.studentId === product.seller.studentId) {
-        //setError("You cannot purchase your own product");
         setShowOwnProductModal(true);
         setProcessing(false);
         return;
@@ -94,11 +91,9 @@ const Transaction = () => {
         user.data.studentId
       );
 
-      // Create transaction record
       await createTransaction(id, user.data.studentId);
       console.log("Transaction created successfully");
 
-      // Create Stripe checkout session using the correct endpoint and port
       console.log(
         "Creating Stripe checkout session for product:",
         product.productId || id
@@ -116,7 +111,6 @@ const Transaction = () => {
         );
       }
 
-      // Redirect to Stripe checkout
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({
         sessionId: checkoutResponse.data.sessionId,
@@ -161,7 +155,6 @@ const Transaction = () => {
         </div>
       </div>
 
-      {/* Own Product Modal */}
       {showOwnProductModal && (
         <div
           className="modal fade show"
@@ -175,14 +168,12 @@ const Transaction = () => {
         >
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content border-0 shadow-lg rounded-4">
-              {/* Header */}
               <div className="modal-header bg-light border-0">
                 <h5 className="modal-title text-primary fw-semibold">
                   Oops! A Little Mix-Up 😊
                 </h5>
               </div>
 
-              {/* Body */}
               <div className="modal-body text-center">
                 <div className="mb-3">
                   <ExclamationTriangle
@@ -199,7 +190,6 @@ const Transaction = () => {
                 </p>
               </div>
 
-              {/* Footer */}
               <div className="modal-footer justify-content-center border-0">
                 <button
                   type="button"

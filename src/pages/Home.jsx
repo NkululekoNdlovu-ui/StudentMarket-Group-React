@@ -10,7 +10,6 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [student, setStudent] = useState({ firstName: "" });
 
-  // Fetch products from API
   useEffect(() => {
     getAllProducts()
       .then((response) => {
@@ -23,7 +22,6 @@ const Home = () => {
             : placeholder,
         }));
 
-        // Sort by price ascending and pick top 4 cheapest products
         const lowestProducts = apiProductsResponse
           .sort((a, b) => a.price - b.price)
           .slice(0, 4);
@@ -33,7 +31,6 @@ const Home = () => {
       .catch((err) => console.error("Failed to fetch products:", err));
   }, []);
 
-  // Get student name from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -75,7 +72,6 @@ const Home = () => {
     <>
       <Header />
 
-      {/* Hero Section */}
       <div
         style={{
           height: "35vh",
@@ -132,7 +128,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Feature Blocks */}
       <div className="container py-5 text-center">
         <div className="row justify-content-center">
           <div className="col-md-10">
@@ -163,7 +158,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Hot Deals Section */}
       <div className="container-fluid" style={hotDealsContainerStyle}>
         <div className="container">
           <h2 style={hotDealsTitleStyle}>Hot Deals 🔥</h2>
@@ -228,7 +222,10 @@ const Home = () => {
                       >
                         <span
                           className="badge rounded-pill text-bg-danger mb-2"
-                          style={{ fontSize: "0.85rem", padding: "0.4em 0.8em" }}
+                          style={{
+                            fontSize: "0.85rem",
+                            padding: "0.4em 0.8em",
+                          }}
                         >
                           HOT DEAL
                         </span>
@@ -238,7 +235,10 @@ const Home = () => {
                         >
                           {product.name}
                         </h5>
-                        <p className="h4 fw-bolder mb-0" style={{ color: "#ff6a00" }}>
+                        <p
+                          className="h4 fw-bolder mb-0"
+                          style={{ color: "#ff6a00" }}
+                        >
                           R {product.price}
                         </p>
                       </div>
@@ -247,7 +247,6 @@ const Home = () => {
                 ))}
               </div>
 
-              {/* View All Products Button */}
               <div className="mt-4 text-center">
                 <Link
                   to="/buy"

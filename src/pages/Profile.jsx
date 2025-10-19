@@ -4,18 +4,38 @@ import { Button, Modal, Form, Image } from "react-bootstrap";
 import Header from "../components/Header";
 import Footer from "../components/footer";
 import { getStudentById, updateStudent } from "../service/StudentService";
-import { 
-    getAvailableProductsByStudent, 
-    updateProduct, 
-    getSoldProductsByStudent 
-} from "../service/ProductService"; 
+import {
+  getAvailableProductsByStudent,
+  updateProduct,
+  getSoldProductsByStudent,
+} from "../service/ProductService";
 import { useNavigate } from "react-router-dom";
 
-// Hardcoded residence addresses
 const residenceAddresses = {
-  "President House": { streetNumber: "22", streetName: "Barrack Street", suburb: "Cape Town City Center", city: "Cape Town", province: "Western Cape", postalCode: "8001" },
-  "New Market Junction": { streetNumber: "45", streetName: "New Market Street", suburb: "Woodstock", city: "Cape Town", province: "Western Cape", postalCode: "8005" },
-  "Plein House": { streetNumber: "10", streetName: "Plein Street", suburb: "Central", city: "Cape Town", province: "Western Cape", postalCode: "8001" },
+  "President House": {
+    streetNumber: "22",
+    streetName: "Barrack Street",
+    suburb: "Cape Town City Center",
+    city: "Cape Town",
+    province: "Western Cape",
+    postalCode: "8001",
+  },
+  "New Market Junction": {
+    streetNumber: "45",
+    streetName: "New Market Street",
+    suburb: "Woodstock",
+    city: "Cape Town",
+    province: "Western Cape",
+    postalCode: "8005",
+  },
+  "Plein House": {
+    streetNumber: "10",
+    streetName: "Plein Street",
+    suburb: "Central",
+    city: "Cape Town",
+    province: "Western Cape",
+    postalCode: "8001",
+  },
 };
 
 const Profile = () => {
@@ -41,10 +61,10 @@ const Profile = () => {
   const navigate = useNavigate();
   const studentId = localStorage.getItem("studentId");
 
-  // --- Image Helpers ---
   const getProfileImageUrl = () => {
     if (!student || !student.profileImage) return null;
-    if (student.profileImage.startsWith("data:image")) return student.profileImage;
+    if (student.profileImage.startsWith("data:image"))
+      return student.profileImage;
     return `data:image/jpeg;base64,${student.profileImage}`;
   };
 
@@ -57,25 +77,24 @@ const Profile = () => {
     setImagePreviewUrl(file ? URL.createObjectURL(file) : null);
   };
 
-  // --- Form Handlers ---
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleResidenceChange = (e) => {
     const residenceName = e.target.value;
-    setFormData(prev => ({ ...prev, residenceName }));
+    setFormData((prev) => ({ ...prev, residenceName }));
 
     const addressInfo = residenceAddresses[residenceName] || {};
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      streetNumber: addressInfo.streetNumber || '',
-      streetName: addressInfo.streetName || '',
-      suburb: addressInfo.suburb || '',
-      city: addressInfo.city || '',
-      province: addressInfo.province || '',
-      postalCode: addressInfo.postalCode || '',
+      streetNumber: addressInfo.streetNumber || "",
+      streetName: addressInfo.streetName || "",
+      suburb: addressInfo.suburb || "",
+      city: addressInfo.city || "",
+      province: addressInfo.province || "",
+      postalCode: addressInfo.postalCode || "",
     }));
   };
 
@@ -100,12 +119,15 @@ const Profile = () => {
             city: formData.city,
             province: formData.province,
             postalCode: formData.postalCode,
-          }
-        }
+          },
+        },
       };
 
       const form = new FormData();
-      form.append("student", new Blob([JSON.stringify(studentDto)], { type: "application/json" }));
+      form.append(
+        "student",
+        new Blob([JSON.stringify(studentDto)], { type: "application/json" })
+      );
       if (selectedImageFile) form.append("profileImage", selectedImageFile);
 
       const response = await updateStudent(student.studentId, form);
@@ -160,22 +182,23 @@ const Profile = () => {
         setStudent(data);
 
         const residenceName = data.residence?.residenceName;
-        const addressInfo = residenceAddresses[residenceName] || data.residence?.address || {};
+        const addressInfo =
+          residenceAddresses[residenceName] || data.residence?.address || {};
 
         setFormData({
-          firstName: data.firstName || '',
-          lastName: data.lastName || '',
-          email: data.email || '',
-          residenceName: residenceName || '',
-          roomNumber: data.residence?.roomNumber || '',
+          firstName: data.firstName || "",
+          lastName: data.lastName || "",
+          email: data.email || "",
+          residenceName: residenceName || "",
+          roomNumber: data.residence?.roomNumber || "",
           floorNumber: data.residence?.floorNumber || 0,
-          building: data.residence?.buildingName || '',
-          streetNumber: addressInfo.streetNumber || '',
-          streetName: addressInfo.streetName || '',
-          suburb: addressInfo.suburb || '',
-          city: addressInfo.city || '',
-          province: addressInfo.province || '',
-          postalCode: addressInfo.postalCode || '',
+          building: data.residence?.buildingName || "",
+          streetNumber: addressInfo.streetNumber || "",
+          streetName: addressInfo.streetName || "",
+          suburb: addressInfo.suburb || "",
+          city: addressInfo.city || "",
+          province: addressInfo.province || "",
+          postalCode: addressInfo.postalCode || "",
         });
         setResidenceId(data.residence?.residenceId || null);
         setAddressId(data.residence?.address?.addressId || null);
@@ -193,7 +216,6 @@ const Profile = () => {
     fetchData();
   }, [studentId]);
 
-  // --- Edit Product ---
   const handleEditProduct = (product) => {
     setEditingProduct(product);
     setEditFormData({
@@ -201,12 +223,16 @@ const Profile = () => {
       price: product.price,
       description: product.productDescription || "",
     });
-    setEditImagePreview(product.imageData ? `data:${product.imageType};base64,${product.imageData}` : null);
+    setEditImagePreview(
+      product.imageData
+        ? `data:${product.imageType};base64,${product.imageData}`
+        : null
+    );
     setShowEditModal(true);
   };
 
   const handleEditInputChange = (e) => {
-    setEditFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setEditFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleEditFileChange = (e) => {
@@ -228,16 +254,23 @@ const Profile = () => {
         availabilityStatus: editingProduct.availabilityStatus,
         seller: editingProduct.seller,
         currency: editingProduct.currency,
-        releaseDate: editingProduct.releaseDate
+        releaseDate: editingProduct.releaseDate,
       };
 
       const formData = new FormData();
-      formData.append("product", new Blob([JSON.stringify(updatedProductDto)], { type: "application/json" }));
+      formData.append(
+        "product",
+        new Blob([JSON.stringify(updatedProductDto)], {
+          type: "application/json",
+        })
+      );
       if (editImageFile) formData.append("productImage", editImageFile);
 
       const response = await updateProduct(editingProduct.productId, formData);
-      setAvailableListings(prev =>
-        prev.map(p => (p.productId === editingProduct.productId ? response.data : p))
+      setAvailableListings((prev) =>
+        prev.map((p) =>
+          p.productId === editingProduct.productId ? response.data : p
+        )
       );
 
       setShowEditModal(false);
@@ -266,27 +299,57 @@ const Profile = () => {
                 <Image
                   src={getProfileImageUrl()}
                   roundedCircle
-                  style={{ width: "120px", height: "120px", objectFit: "cover", border: "2px solid #ccc" }}
+                  style={{
+                    width: "120px",
+                    height: "120px",
+                    objectFit: "cover",
+                    border: "2px solid #ccc",
+                  }}
                   alt="Profile"
                 />
               ) : (
-                <div className="d-flex align-items-center justify-content-center" style={{ width: "120px", height: "120px", borderRadius: "50%", backgroundColor: "#616868ff", color: "white", fontWeight: "bold", fontSize: "40px", border: "2px solid #ccc" }}>
+                <div
+                  className="d-flex align-items-center justify-content-center"
+                  style={{
+                    width: "120px",
+                    height: "120px",
+                    borderRadius: "50%",
+                    backgroundColor: "#616868ff",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "40px",
+                    border: "2px solid #ccc",
+                  }}
+                >
                   {getInitials(student.firstName, student.lastName)}
                 </div>
               )}
             </div>
             <div>
-              <h2>{student.firstName} {student.lastName}</h2>
+              <h2>
+                {student.firstName} {student.lastName}
+              </h2>
               <p className="lead text-muted">{student.email}</p>
             </div>
           </div>
           <div className="d-flex flex-column align-items-start">
-            <p><strong>Residence:</strong> {student.residence?.residenceName}</p>
-            <p><strong>Floor:</strong> {student.residence?.floorNumber ?? 'N/A'}</p>
+            <p>
+              <strong>Residence:</strong> {student.residence?.residenceName}
+            </p>
+            <p>
+              <strong>Floor:</strong> {student.residence?.floorNumber ?? "N/A"}
+            </p>
             {student.residence?.address && (
-              <p><strong>Address:</strong> {student.residence.address.streetNumber} {student.residence.address.streetName}, {student.residence.address.suburb}</p>
+              <p>
+                <strong>Address:</strong>{" "}
+                {student.residence.address.streetNumber}{" "}
+                {student.residence.address.streetName},{" "}
+                {student.residence.address.suburb}
+              </p>
             )}
-            <Button onClick={() => setShowModal(true)} className="mt-2">Edit Profile</Button>
+            <Button onClick={() => setShowModal(true)} className="mt-2">
+              Edit Profile
+            </Button>
           </div>
         </div>
 
@@ -294,41 +357,93 @@ const Profile = () => {
         <div className="row g-4">
           {/* Active Listings */}
           <div className="col-md-6">
-            <div className="border rounded shadow-sm p-4" style={{ backgroundColor: "#f8f9fa", minHeight: "500px" }}>
+            <div
+              className="border rounded shadow-sm p-4"
+              style={{ backgroundColor: "#f8f9fa", minHeight: "500px" }}
+            >
               <h4 className="text-secondary">Active Listings</h4>
-              <span className="badge bg-primary">{availableListings.length} items</span>
-              <div className="overflow-auto mt-3" style={{ maxHeight: "420px" }}>
-                {availableListings.length > 0 ? availableListings.map((product) => (
-                  <div key={product.productId} className="card mb-3 shadow-sm">
-                    <img src={product.imageData ? `data:${product.imageType};base64,${product.imageData}` : "/images/placeholder.png"} className="card-img-top" alt={product.productName} />
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title">{product.productName}</h5>
-                      <p className="card-text">R{product.price}</p>
-                      <div className="mt-auto d-flex justify-content-start">
-                        <Button size="sm" variant="outline-primary" onClick={() => handleEditProduct(product)}>Edit</Button>
+              <span className="badge bg-primary">
+                {availableListings.length} items
+              </span>
+              <div
+                className="overflow-auto mt-3"
+                style={{ maxHeight: "420px" }}
+              >
+                {availableListings.length > 0 ? (
+                  availableListings.map((product) => (
+                    <div
+                      key={product.productId}
+                      className="card mb-3 shadow-sm"
+                    >
+                      <img
+                        src={
+                          product.imageData
+                            ? `data:${product.imageType};base64,${product.imageData}`
+                            : "/images/placeholder.png"
+                        }
+                        className="card-img-top"
+                        alt={product.productName}
+                      />
+                      <div className="card-body d-flex flex-column">
+                        <h5 className="card-title">{product.productName}</h5>
+                        <p className="card-text">R{product.price}</p>
+                        <div className="mt-auto d-flex justify-content-start">
+                          <Button
+                            size="sm"
+                            variant="outline-primary"
+                            onClick={() => handleEditProduct(product)}
+                          >
+                            Edit
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )) : <p>No active listings.</p>}
+                  ))
+                ) : (
+                  <p>No active listings.</p>
+                )}
               </div>
             </div>
           </div>
 
           {/* Sold Items */}
           <div className="col-md-6">
-            <div className="border rounded shadow-sm p-4" style={{ backgroundColor: "#e9f7ef", minHeight: "500px" }}>
+            <div
+              className="border rounded shadow-sm p-4"
+              style={{ backgroundColor: "#e9f7ef", minHeight: "500px" }}
+            >
               <h4 className="text-success">Sold Items</h4>
-              <span className="badge bg-success">{soldListings.length || 0} items</span>
-              <div className="overflow-auto mt-3" style={{ maxHeight: "420px" }}>
-                {soldListings.length > 0 ? soldListings.map((product) => (
-                  <div key={product.productId} className="card mb-3 shadow-sm">
-                    <img src={product.imageData ? `data:${product.imageType};base64,${product.imageData}` : "/images/placeholder.png"} className="card-img-top" alt={product.productName} />
-                    <div className="card-body">
-                      <h5 className="card-title">{product.productName}</h5>
-                      <p className="card-text">Sold for: R{product.price}</p>
+              <span className="badge bg-success">
+                {soldListings.length || 0} items
+              </span>
+              <div
+                className="overflow-auto mt-3"
+                style={{ maxHeight: "420px" }}
+              >
+                {soldListings.length > 0 ? (
+                  soldListings.map((product) => (
+                    <div
+                      key={product.productId}
+                      className="card mb-3 shadow-sm"
+                    >
+                      <img
+                        src={
+                          product.imageData
+                            ? `data:${product.imageType};base64,${product.imageData}`
+                            : "/images/placeholder.png"
+                        }
+                        className="card-img-top"
+                        alt={product.productName}
+                      />
+                      <div className="card-body">
+                        <h5 className="card-title">{product.productName}</h5>
+                        <p className="card-text">Sold for: R{product.price}</p>
+                      </div>
                     </div>
-                  </div>
-                )) : <p>No sold items.</p>}
+                  ))
+                ) : (
+                  <p>No sold items.</p>
+                )}
               </div>
             </div>
           </div>
@@ -337,101 +452,199 @@ const Profile = () => {
 
       <Footer />
 
-      {/* Edit Profile Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton><Modal.Title>Edit Profile</Modal.Title></Modal.Header>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Profile</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3 d-flex flex-column align-items-center">
-              <Image src={imagePreviewUrl || getProfileImageUrl() || "/images/placeholder.png"} roundedCircle style={{ width: "100px", height: "100px", objectFit: "cover" }} className="mb-2" />
+              <Image
+                src={
+                  imagePreviewUrl ||
+                  getProfileImageUrl() ||
+                  "/images/placeholder.png"
+                }
+                roundedCircle
+                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                className="mb-2"
+              />
               <Form.Label>Change Profile Picture</Form.Label>
               <Form.Control type="file" onChange={handleFileChange} />
             </Form.Group>
             <hr />
             <Form.Group className="mb-3">
               <Form.Label>First Name</Form.Label>
-              <Form.Control type="text" name="firstName" value={formData.firstName || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="firstName"
+                value={formData.firstName || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Last Name</Form.Label>
-              <Form.Control type="text" name="lastName" value={formData.lastName || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="lastName"
+                value={formData.lastName || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" name="email" value={formData.email || ''} disabled />
+              <Form.Control
+                type="email"
+                name="email"
+                value={formData.email || ""}
+                disabled
+              />
             </Form.Group>
 
             <h5 className="mt-4">Residence Details</h5>
             <Form.Group className="mb-3">
               <Form.Label>Residence Name</Form.Label>
-              <Form.Control as="select" name="residenceName" value={formData.residenceName || ''} onChange={handleResidenceChange}>
+              <Form.Control
+                as="select"
+                name="residenceName"
+                value={formData.residenceName || ""}
+                onChange={handleResidenceChange}
+              >
                 <option value="">Select Residence</option>
-                {Object.keys(residenceAddresses).map(name => (
-                  <option key={name} value={name}>{name}</option>
+                {Object.keys(residenceAddresses).map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
                 ))}
               </Form.Control>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Room Number</Form.Label>
-              <Form.Control type="text" name="roomNumber" value={formData.roomNumber || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="roomNumber"
+                value={formData.roomNumber || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Floor Number</Form.Label>
-              <Form.Control type="number" name="floorNumber" value={formData.floorNumber || 0} onChange={handleInputChange} />
+              <Form.Control
+                type="number"
+                name="floorNumber"
+                value={formData.floorNumber || 0}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Street Number</Form.Label>
-              <Form.Control type="text" name="streetNumber" value={formData.streetNumber || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="streetNumber"
+                value={formData.streetNumber || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Street Name</Form.Label>
-              <Form.Control type="text" name="streetName" value={formData.streetName || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="streetName"
+                value={formData.streetName || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Suburb</Form.Label>
-              <Form.Control type="text" name="suburb" value={formData.suburb || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="suburb"
+                value={formData.suburb || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>City</Form.Label>
-              <Form.Control type="text" name="city" value={formData.city || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="city"
+                value={formData.city || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Province</Form.Label>
-              <Form.Control type="text" name="province" value={formData.province || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="province"
+                value={formData.province || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Postal Code</Form.Label>
-              <Form.Control type="text" name="postalCode" value={formData.postalCode || ''} onChange={handleInputChange} />
+              <Form.Control
+                type="text"
+                name="postalCode"
+                value={formData.postalCode || ""}
+                onChange={handleInputChange}
+              />
             </Form.Group>
 
-            <Button variant="primary" onClick={handleSave}>Save Changes</Button>
+            <Button variant="primary" onClick={handleSave}>
+              Save Changes
+            </Button>
           </Form>
         </Modal.Body>
       </Modal>
 
-      {/* Edit Product Modal */}
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-        <Modal.Header closeButton><Modal.Title>Edit Product</Modal.Title></Modal.Header>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Product</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Product Name</Form.Label>
-              <Form.Control type="text" name="productName" value={editFormData.productName || ''} onChange={handleEditInputChange} />
+              <Form.Control
+                type="text"
+                name="productName"
+                value={editFormData.productName || ""}
+                onChange={handleEditInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Price</Form.Label>
-              <Form.Control type="number" name="price" value={editFormData.price || ''} onChange={handleEditInputChange} />
+              <Form.Control
+                type="number"
+                name="price"
+                value={editFormData.price || ""}
+                onChange={handleEditInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Description</Form.Label>
-              <Form.Control as="textarea" rows={3} name="description" value={editFormData.description || ''} onChange={handleEditInputChange} />
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="description"
+                value={editFormData.description || ""}
+                onChange={handleEditInputChange}
+              />
             </Form.Group>
             <Form.Group className="mb-3 d-flex flex-column align-items-center">
-              <Image src={editImagePreview || "/images/placeholder.png"} rounded style={{ width: "120px", height: "120px", objectFit: "cover" }} className="mb-2" />
+              <Image
+                src={editImagePreview || "/images/placeholder.png"}
+                rounded
+                style={{ width: "120px", height: "120px", objectFit: "cover" }}
+                className="mb-2"
+              />
               <Form.Label>Change Product Image</Form.Label>
               <Form.Control type="file" onChange={handleEditFileChange} />
             </Form.Group>
-            <Button variant="primary" onClick={handleSaveEditedProduct}>Save Changes</Button>
+            <Button variant="primary" onClick={handleSaveEditedProduct}>
+              Save Changes
+            </Button>
           </Form>
         </Modal.Body>
       </Modal>

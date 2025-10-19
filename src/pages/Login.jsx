@@ -19,7 +19,7 @@ const Login = () => {
     try {
       console.log("🔑 Attempting login with:", {
         email: credentials.identifier,
-        passwordLength: credentials.password.length
+        passwordLength: credentials.password.length,
       });
 
       const response = await authenticateUser({
@@ -36,7 +36,6 @@ const Login = () => {
       console.log("Login response data:", JSON.stringify(result, null, 2));
 
       if (response.status === 200 && result.success) {
-        // Store IDs for backward compatibility
         if (result.data.studentId) {
           localStorage.setItem("studentId", result.data.studentId);
         }
@@ -47,31 +46,35 @@ const Login = () => {
           localStorage.setItem("superAdminId", result.data.superAdminId);
         }
 
-        // Use AuthContext to set authentication state
         try {
-          console.log("About to call login with:", { 
-            token: result.token ? `${result.token.substring(0, 20)}...` : "No token",
+          console.log("About to call login with:", {
+            token: result.token
+              ? `${result.token.substring(0, 20)}...`
+              : "No token",
             role: result.role,
-            data: result.data
+            data: result.data,
           });
-          
+
           login(result.token, result.role, result.data);
-          
+
           console.log("Login called successfully, checking localStorage:");
-          console.log("Token:", localStorage.getItem('token') ? `${localStorage.getItem('token').substring(0, 20)}...` : "No token");
-          console.log("Role:", localStorage.getItem('role'));
-          console.log("UserData:", localStorage.getItem('userData'));
-          
+          console.log(
+            "Token:",
+            localStorage.getItem("token")
+              ? `${localStorage.getItem("token").substring(0, 20)}...`
+              : "No token"
+          );
+          console.log("Role:", localStorage.getItem("role"));
+          console.log("UserData:", localStorage.getItem("userData"));
         } catch (error) {
           console.error("Error storing authentication data:", error);
           alert("Login failed due to invalid token. Please contact support.");
           return;
         }
 
-        // Redirect based on role
         const role = result.role.toUpperCase();
         console.log("Redirecting based on role:", role);
-        
+
         if (role === "SUPER_ADMIN" || role === "SUPERADMIN") {
           console.log("Navigating to super admin dashboard");
           navigate("/superadmin-dashboard");
@@ -91,8 +94,7 @@ const Login = () => {
         }
       } else {
         console.error("❌ Login failed - Backend response:", result);
-        
-        // Show specific error message based on the response
+
         if (result.message) {
           alert(`Login failed: ${result.message}`);
         } else {
@@ -104,7 +106,7 @@ const Login = () => {
       console.error("💥 Error response:", error.response);
       console.error("💥 Error response data:", error.response?.data);
       console.error("💥 Error response status:", error.response?.status);
-      
+
       if (error.response?.status === 401) {
         alert("❌ Invalid email or password. Please check your credentials.");
       } else if (error.response?.status === 403) {
