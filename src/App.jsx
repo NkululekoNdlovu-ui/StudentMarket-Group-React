@@ -11,7 +11,6 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import Sell from "./pages/Sell";
-import Pending from "./pages/Pending";
 import Buy from "./pages/Buy";
 import Transaction from "./pages/Transaction";
 import Profile from "./pages/Profile";
@@ -22,6 +21,7 @@ import LandingPage from "./pages/LandingPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import About from "./pages/About";
 import SuccessPage from "./pages/Success";
+import Cancel from "./pages/Cancel";
 
 const queryClient = new QueryClient();
 
@@ -31,99 +31,94 @@ const App = () => (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/signup" element={<SignUp />} />
 
-          {/* Student routes - require authentication */}
-          <Route 
-            path="/home" 
+          <Route
+            path="/home"
             element={
               <PrivateRoute>
                 <Home />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/sell" 
+          <Route
+            path="/sell"
             element={
               <PrivateRoute>
                 <Sell />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/pending" 
+          <Route
+            path="/cancel"
             element={
               <PrivateRoute>
-                <Pending />
+                <Cancel />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/buy" 
+          <Route
+            path="/buy"
             element={
               <PrivateRoute>
                 <Buy />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/success" 
+          <Route
+            path="/success"
             element={
               <PrivateRoute>
-                <SuccessPage/>
+                <SuccessPage />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/about" 
+          <Route
+            path="/about"
             element={
               <PrivateRoute>
                 <About />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/transaction/:id" 
+          <Route
+            path="/transaction/:id"
             element={
               <PrivateRoute>
                 <Transaction />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/profile" 
+          <Route
+            path="/profile"
             element={
               <PrivateRoute>
                 <Profile />
               </PrivateRoute>
-            } 
+            }
           />
 
-          {/* Admin routes - require ADMIN or SUPER_ADMIN role */}
-          <Route 
-            path="/admin-dashboard" 
+          <Route
+            path="/admin-dashboard"
             element={
-              <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+              <RoleBasedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
                 <AdminDashboard />
               </RoleBasedRoute>
-            } 
+            }
           />
 
-          {/* Super Admin routes - require SUPER_ADMIN role only */}
-          <Route 
-            path="/superadmin-dashboard" 
+          <Route
+            path="/superadmin-dashboard"
             element={
-              <RoleBasedRoute allowedRoles={['SUPER_ADMIN']}>
+              <RoleBasedRoute allowedRoles={["SUPER_ADMIN"]}>
                 <SuperAdminDashboard />
               </RoleBasedRoute>
-            } 
+            }
           />
 
-          {/* 404 Not Found */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

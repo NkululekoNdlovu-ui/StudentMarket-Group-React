@@ -1,5 +1,5 @@
 import React from "react";
-import team1 from "../assets/logoSt.png"; // replace with actual image paths
+import team1 from "../assets/logoSt.png";
 import team2 from "../assets/logoSt.png";
 import team3 from "../assets/logoSt.png";
 import team4 from "../assets/logoSt.png";

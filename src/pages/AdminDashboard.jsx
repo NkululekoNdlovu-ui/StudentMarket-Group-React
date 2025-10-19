@@ -157,7 +157,6 @@ const AdminDashboard = () => {
   };
 
   const getCategoryIcon = (category) => {
-    // Return placeholder text instead of emojis
     switch (category?.toLowerCase()) {
       case "electronics":
         return "ELEC";

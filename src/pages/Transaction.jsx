@@ -29,6 +29,8 @@ const Transaction = () => {
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const [showOwnProductModal, setShowOwnProductModal] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,7 +65,6 @@ const Transaction = () => {
       setProcessing(true);
       setError(null);
 
-      // Authentication checks
       if (!isAuthenticated() || !user || !user.data) {
         setError("You must be logged in to make a purchase");
         setProcessing(false);
@@ -77,30 +78,39 @@ const Transaction = () => {
         return;
       }
 
-      // Check if user is trying to buy their own product
       if (product.seller && user.data.studentId === product.seller.studentId) {
-        setError("You cannot purchase your own product");
+        setShowOwnProductModal(true);
         setProcessing(false);
         return;
       }
 
-      console.log("Creating transaction for product:", id, "buyer:", user.data.studentId);
-      
-      // Create transaction record
+      console.log(
+        "Creating transaction for product:",
+        id,
+        "buyer:",
+        user.data.studentId
+      );
+
       await createTransaction(id, user.data.studentId);
       console.log("Transaction created successfully");
 
-      // Create Stripe checkout session using the correct endpoint and port
-      console.log("Creating Stripe checkout session for product:", product.productId || id);
-      
+      console.log(
+        "Creating Stripe checkout session for product:",
+        product.productId || id
+      );
+
       const checkoutResponse = await payForProduct(product);
       console.log("Stripe checkout response:", checkoutResponse.data);
 
-      if (checkoutResponse.data.status !== "Success" || !checkoutResponse.data.sessionId) {
-        throw new Error(checkoutResponse.data.message || "Failed to create Stripe session");
+      if (
+        checkoutResponse.data.status !== "Success" ||
+        !checkoutResponse.data.sessionId
+      ) {
+        throw new Error(
+          checkoutResponse.data.message || "Failed to create Stripe session"
+        );
       }
 
-      // Redirect to Stripe checkout
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({
         sessionId: checkoutResponse.data.sessionId,
@@ -116,7 +126,11 @@ const Transaction = () => {
       }
     } catch (err) {
       console.error("Purchase failed:", err);
-      setError(err.response?.data?.message || err.message || "Payment failed. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Payment failed. Please try again."
+      );
       setProcessing(false);
     }
   };
@@ -140,6 +154,55 @@ const Transaction = () => {
           />
         </div>
       </div>
+
+      {showOwnProductModal && (
+        <div
+          className="modal fade show"
+          style={{
+            display: "block",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            backdropFilter: "blur(4px)",
+          }}
+          tabIndex="-1"
+          role="dialog"
+        >
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content border-0 shadow-lg rounded-4">
+              <div className="modal-header bg-light border-0">
+                <h5 className="modal-title text-primary fw-semibold">
+                  Oops! A Little Mix-Up 😊
+                </h5>
+              </div>
+
+              <div className="modal-body text-center">
+                <div className="mb-3">
+                  <ExclamationTriangle
+                    size={60}
+                    className="text-warning mb-2"
+                  />
+                </div>
+                <p className="fs-5 text-secondary">
+                  Looks like this product belongs to you! 🛍️
+                </p>
+                <p className="text-muted mb-0">
+                  You can’t purchase your own item — but feel free to check out
+                  what other students are selling.
+                </p>
+              </div>
+
+              <div className="modal-footer justify-content-center border-0">
+                <button
+                  type="button"
+                  className="btn btn-primary px-4 rounded-pill"
+                  onClick={() => setShowOwnProductModal(false)}
+                >
+                  Got it, thanks!
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

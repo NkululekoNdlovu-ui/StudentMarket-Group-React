@@ -11,15 +11,15 @@ const LandingPage = () => {
   useEffect(() => {
     getAllProducts()
       .then((response) => {
-        console.log("LandingPage API Response:", response.data); // Debug log
+        console.log("LandingPage API Response:", response.data);
         const apiProductsResponse = response.data.map((product, index) => ({
-          id: product.id || product.productId || index, // Use fallback if id is undefined
-          name: product.productName || 'Unnamed Product',
+          id: product.id || product.productId || index,
+          name: product.productName || "Unnamed Product",
           image: product.imageData
             ? `data:${product.imageType};base64,${product.imageData}`
             : placeholder,
         }));
-        console.log("LandingPage Processed products:", apiProductsResponse); // Debug log
+        console.log("LandingPage Processed products:", apiProductsResponse);
         setProducts(apiProductsResponse);
       })
       .catch((err) => console.error("Failed to fetch products:", err));
@@ -165,7 +165,10 @@ const LandingPage = () => {
             <p className="text-center text-muted">No products available</p>
           ) : (
             products.slice(0, 6).map((product) => (
-              <div className="col-8 col-md-3 me-3" key={`product-${product.id}`}>
+              <div
+                className="col-8 col-md-3 me-3"
+                key={`product-${product.id}`}
+              >
                 <div className="card shadow-sm h-100">
                   <img
                     src={product.image}

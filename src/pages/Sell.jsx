@@ -4,7 +4,10 @@ import { toast } from "react-toastify";
 import { ArrowLeft, Upload } from "react-bootstrap-icons";
 import { capturedProductDetails } from "../service/ProductService";
 import { useAuth } from "../context/AuthContext";
-import { validateSensitiveOperation, isTokenNearExpiry } from "../utils/authUtils";
+import {
+  validateSensitiveOperation,
+  isTokenNearExpiry,
+} from "../utils/authUtils";
 
 const Sell = () => {
   const [formData, setFormData] = useState({
@@ -42,7 +45,6 @@ const Sell = () => {
     setIsLoading(true);
 
     try {
-      // Frontend UX validation (NOT for security - backend will validate)
       if (!isAuthenticated() || !user || !user.data) {
         setIsLoading(false);
         toast.error("You must login first before selling a product.");
@@ -50,15 +52,13 @@ const Sell = () => {
         return;
       }
 
-      // UX check: Warn if user is not a student (backend will enforce)
-      if (user.role !== 'STUDENT') {
+      if (user.role !== "STUDENT") {
         setIsLoading(false);
         toast.error("Only students can sell products.");
         navigate("/home");
         return;
       }
 
-      // UX check: Warn if user doesn't have studentId (backend will enforce)
       if (!user.data.studentId) {
         setIsLoading(false);
         toast.error("Student profile incomplete. Please contact support.");
@@ -66,27 +66,26 @@ const Sell = () => {
         return;
       }
 
-      // Frontend validation for sensitive operation (UX enhancement)
       try {
-        validateSensitiveOperation('CREATE_PRODUCT', user.role, token);
+        validateSensitiveOperation("CREATE_PRODUCT", user.role, token);
       } catch (error) {
         setIsLoading(false);
         toast.error(error.message);
-        if (error.message.includes('re-authenticate')) {
+        if (error.message.includes("re-authenticate")) {
           navigate("/login");
         }
         return;
       }
 
-      // UX check: Warn if token is near expiry
       if (isTokenNearExpiry(token, 15)) {
-        toast.warning("Your session expires soon. Consider refreshing your login after this action.");
+        toast.warning(
+          "Your session expires soon. Consider refreshing your login after this action."
+        );
       }
 
       const { productName, description, condition, category, price, image } =
         formData;
 
-      // Frontend form validation (UX only - backend will also validate)
       if (!productName?.trim()) {
         toast.error("Product name is required.");
         setIsLoading(false);
@@ -141,14 +140,13 @@ const Sell = () => {
       );
 
       if (image) {
-        // Frontend validation for image (UX only)
-        if (image.size > 10 * 1024 * 1024) { // 10MB
+        if (image.size > 10 * 1024 * 1024) {
           toast.error("Image size should be less than 10MB.");
           setIsLoading(false);
           return;
         }
 
-        if (!image.type.startsWith('image/')) {
+        if (!image.type.startsWith("image/")) {
           toast.error("Please select a valid image file.");
           setIsLoading(false);
           return;
@@ -157,30 +155,32 @@ const Sell = () => {
         formDataToSend.append("productImage", image);
       }
 
-      // Log the data being sent for debugging (remove in production)
       console.log("Submitting product with data:", productData);
-      console.log("Token being used:", token ? `${token.substring(0, 20)}...` : "No token");
+      console.log(
+        "Token being used:",
+        token ? `${token.substring(0, 20)}...` : "No token"
+      );
 
       await capturedProductDetails(formDataToSend);
 
       toast.success("Your item has been submitted for approval!");
       navigate("/home");
-      
     } catch (error) {
       console.error("Error submitting product:", error);
-      
-      // Handle specific error responses
+
       if (error.response?.status === 401) {
         toast.error("Authentication failed. Please login again.");
         navigate("/login");
       } else if (error.response?.status === 403) {
-        const errorMessage = error.response?.data?.message || "Access forbidden";
+        const errorMessage =
+          error.response?.data?.message || "Access forbidden";
         toast.error(errorMessage);
-        if (errorMessage.includes('re-authenticate')) {
+        if (errorMessage.includes("re-authenticate")) {
           navigate("/login");
         }
       } else if (error.response?.status === 400) {
-        const errorMessage = error.response?.data?.message || "Invalid data provided";
+        const errorMessage =
+          error.response?.data?.message || "Invalid data provided";
         toast.error(errorMessage);
       } else {
         toast.error("Failed to submit your item. Please try again.");
